@@ -29,7 +29,7 @@ export default function Index() {
         <Text style={styles.buttonText}>Localização</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={() => rota.push('/Menu')}>
+      <TouchableOpacity style={styles.button} onPress={() => rota.push('/sobre')}>
         <Text style={styles.buttonText}>Sobre</Text>
       </TouchableOpacity>
     </View>
@@ -43,7 +43,7 @@ export default function Index() {
 
     container: {
     flex: 1,
-    backgroundColor: '#E4DAC9',
+    backgroundColor: '#F2ECE4',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,                       

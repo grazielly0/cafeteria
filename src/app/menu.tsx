@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { useNavigation } from '@react-navigation/native';
 
 const categorias = ['Cafés', 'Chás', 'Doces', 'Salgados'];
 
@@ -346,17 +347,25 @@ const produtos = [
 ];
 
 export default function MenuScreen() {
-  const [categoriaAtiva, setCategoriaAtiva] = useState('Cafés');
+  const navigation = useNavigation();
 
+  const [categoriaAtiva, setCategoriaAtiva] = useState('Cafés');
   const produtosFiltrados = produtos.filter(p => p.categoria === categoriaAtiva);
 
   const handleAddToCart = (produto) => {
     console.log(`Adicionado ao carrinho: ${produto.nome}`);
-    // Aqui futuramente você pode salvar no estado global ou AsyncStorage
   };
 
   return (
     <View style={styles.container}>
+      {/* NOVO Botão Voltar com ícone */}
+      <TouchableOpacity
+        style={styles.botaoVoltar}
+        onPress={() => navigation.goBack()}
+      >
+        <MaterialIcons name="arrow-back" size={28} color="#A67C52" />
+      </TouchableOpacity>
+
       <View style={styles.icons}>
         <MaterialIcons name="shopping-cart" size={24} color="#D09290" />
         <AntDesign name="adduser" size={24} color="black" />
@@ -404,6 +413,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#FCF8F3',
     paddingHorizontal: 16,
     paddingTop: 40,
+  },
+  botaoVoltar: {
+    position: 'absolute',
+    top: 45,
+    left: 16,
+    zIndex: 10,
+    padding: 4,
   },
   icons: {
     flexDirection: 'row',
@@ -456,12 +472,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 2,
-  
-    // ⬇️ Adicionado para alinhar o botão sempre embaixo
-    height: 230, // Ajuste esse valor se quiser cards maiores/menores
+    height: 230,
     justifyContent: 'space-between',
   },
-  
   imagem: {
     width: 80,
     height: 80,
@@ -483,12 +496,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#A67C52',
     paddingVertical: 6,
     paddingHorizontal: 12,
-    borderRadius: 20,
+    borderRadius: 12,
+    width: "100%",
+    height:"15%",
   },
   textoBotaoCarrinho: {
     color: '#fff',
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  
 });
