@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react
 import { MaterialIcons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 
 const categorias = ['Cafés', 'Chás', 'Doces', 'Salgados'];
 
@@ -48,7 +49,7 @@ const produtos = [
     nome: 'Cappuccino Italiano',
     preco: 'R$  12,00',
     categoria: 'Cafés',
-    imagem: require('../../assets/images/capp.jpg'),
+    imagem: require('../../assets/images/italiano.jpg'),
   },
   {
     id: '6',
@@ -67,10 +68,10 @@ const produtos = [
 
   {
     id: '8',
-    nome: 'Latte Nacchhiato',
+    nome: 'Macaccino',
     preco: 'R$ 12,00',
     categoria: 'Cafés',
-    imagem: require('../../assets/images/latteMacch.jpg'),
+    imagem: require('../../assets/images/macaccino.jpg'),
   },
   {
     id: '9',
@@ -335,19 +336,28 @@ const produtos = [
   },
 
   {
-    id: '35',
+    id: '41',
     nome: 'Pavê de Chocolate e Avelã ',
     preco: 'R$ 14,50',
     categoria: 'Doces',
     imagem: require('../../assets/images/pavechoco.jpg'),
   },
 
+  {
+    id: '42',
+    nome: 'Café Pingado ',
+    preco: 'R$ 14,50',
+    categoria: 'Cafés',
+    imagem: require('../../assets/images/pingado.jpg'),
+  },
 
 
 ];
 
 export default function MenuScreen() {
   const navigation = useNavigation();
+  const router = useRouter();
+  const rota = useRouter();
 
   const [categoriaAtiva, setCategoriaAtiva] = useState('Cafés');
   const produtosFiltrados = produtos.filter(p => p.categoria === categoriaAtiva);
@@ -358,18 +368,24 @@ export default function MenuScreen() {
 
   return (
     <View style={styles.container}>
-      {/* NOVO Botão Voltar com ícone */}
-      <TouchableOpacity
+  <TouchableOpacity
         style={styles.botaoVoltar}
-        onPress={() => navigation.goBack()}
+        onPress={() => rota.push('/')}
       >
         <MaterialIcons name="arrow-back" size={28} color="#A67C52" />
       </TouchableOpacity>
 
-      <View style={styles.icons}>
-        <MaterialIcons name="shopping-cart" size={24} color="#D09290" />
+     
+  <View style={styles.icons}>
+    <TouchableOpacity onPress={() => rota.push('/pedido')}>
+    <MaterialIcons name="shopping-cart" size={24} color="#D09290" />
+  </TouchableOpacity>
+
+  <TouchableOpacity onPress={() => rota.push('/cadastro')}>
         <AntDesign name="adduser" size={24} color="black" />
-      </View>
+      </TouchableOpacity>
+    </View>
+    
 
       <Text style={styles.titulo}>MENU</Text>
 
@@ -406,7 +422,6 @@ export default function MenuScreen() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

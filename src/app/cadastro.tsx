@@ -1,103 +1,138 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React from 'react';
+import { View, TouchableOpacity, Text, StyleSheet, TextInput, Alert } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { useRouter } from "expo-router";
+import { useState, useEffect } from 'react';
+import { useClienteDataBase, ClienteDataBase } from '@/database/useClienteDataBase';
 
-const RegisterScreen = ({ navigation }) => {
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+export default function cadastro() {
+    const [nome, setNome] = useState("")
+    const [telefone, setTelefone] = useState("")
+    const [email, setEmail] = useState("")
+    const [senha, setSenha] = useState("")
+    const [cliente, setCliente] = useState<ClienteDataBase[]>()
+    const clienteDataBase = useClienteDataBase()
+    const rota = useRouter()
+  
+    async function create(){
+        try{
+            const response = await clienteDataBase.create({
+                nome,
+                telefone,
+                email,
+                senha
+            })   
+  
+            //Mostrar que cadastrou
+            Alert.alert("Cliente cadastrado com o ID: " + response.insertedRowId)
+        }catch(error){
+            console.log(error)
+        }
+        setNome("");
+        setTelefone("");
+        setEmail("");
+        setSenha("");
+      
+      }//fim do inserir
+ 
 
-  const handleCadastro = () => {
-    if (!nome || !email || !senha) {
-      Alert.alert('Preencha todos os campos');
-      return;
-    }
-
-    // Aqui você pode integrar com backend ou Firebase
-    Alert.alert('Cadastro realizado com sucesso!');
-    navigation.navigate('Login');
-  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>CADASTRO</Text>
+      {/* Topo com botão de voltar, título e ícones */}
+      <View style={styles.topBar}>
+        <TouchableOpacity style={styles.botaoVoltar} onPress={() => rota.push('/')}>
+          <MaterialIcons name="arrow-back" size={28} color="#A67C52" />
+        </TouchableOpacity>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Nome"
-        placeholderTextColor="#999"
-        value={nome}
-        onChangeText={setNome}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="E-mail"
-        placeholderTextColor="#999"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        placeholderTextColor="#999"
-        value={senha}
-        onChangeText={setSenha}
-        secureTextEntry
-      />
+        <Text style={styles.title}>FAÇA SEU CADASTRO</Text>
 
-      <TouchableOpacity style={styles.botao} onPress={handleCadastro}>
-        <Text style={styles.textoBotao}>Cadastrar</Text>
-      </TouchableOpacity>
+        <View style={styles.icons}>
+          <TouchableOpacity onPress={() => rota.push('/cadastro')}>
+            <MaterialIcons name="shopping-cart" size={24} color="#D09290" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => rota.push('/perfilUser')}>
+            <AntDesign name="adduser" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+      </View>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.link}>Já tem uma conta? Fazer login</Text>
+      <View style={styles.formBox}>
+        <TextInput placeholder="Nome"   onChangeText={setNome} value={nome} style={styles.input} />
+        <TextInput placeholder="Telefone"   onChangeText={setTelefone} value={telefone} style={styles.input} />
+        <TextInput placeholder="E-mail"  onChangeText={setEmail} value={email} style={styles.input} />
+        <TextInput placeholder="Senha"  onChangeText={setSenha} value={senha}  style={styles.input} secureTextEntry />
+
+        <TouchableOpacity  onPress={create} style={styles.button}>
+          <Text style={styles.buttonText}>CADASTRAR</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity onPress={() => rota.push('/login')}>
+        <Text style={styles.linkText}>Já tem seu cadastro? Clique para fazer login</Text>
       </TouchableOpacity>
     </View>
   );
-};
-
-export default RegisterScreen;
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FCF8F3',
-    justifyContent: 'center',
-    paddingHorizontal: 30,
+    backgroundColor: '#F6F1EA',
+    paddingTop: 40,
+    alignItems: 'center',
   },
-  titulo: {
-    fontSize: 28,
+  topBar: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  botaoVoltar: {
+    padding: 4,
+  },
+  icons: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  title: {
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#A67C52',
+    marginTop: 20,
+    marginBottom: 10,
     textAlign: 'center',
-    marginBottom: 30,
+  },
+  formBox: {
+    backgroundColor: '#E7DCC9',
+    padding: 20,
+    borderRadius: 10,
+    width: '85%',
+    alignItems: 'center',
   },
   input: {
     backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 14,
-    fontSize: 16,
-    marginBottom: 15,
-    borderColor: '#DDD0C4',
-    borderWidth: 1,
-    color: '#333',
+    marginBottom: 10,
+    padding: 10,
+    borderRadius: 5,
+    width: '100%',
   },
-  botao: {
-    backgroundColor: '#C89D72',
-    padding: 16,
-    borderRadius: 10,
+  button: {
+    backgroundColor: '#D09290',
+    padding: 12,
+    borderRadius: 5,
     alignItems: 'center',
-    marginTop: 10,
+    width: '100%',
   },
-  textoBotao: {
+  buttonText: {
     color: '#fff',
-    fontSize: 16,
     fontWeight: 'bold',
   },
-  link: {
-    marginTop: 20,
-    textAlign: 'center',
-    color: '#7C4F2D',
+  linkText: {
+    marginTop: 15,
+    color: '#333',
     textDecorationLine: 'underline',
+    textAlign: 'center',
   },
 });

@@ -1,25 +1,25 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 
-const OrderConfirmationScreen = ({ navigation }) => {
+const OrderConfirmationScreen = () => {
+  const router = useRouter();
+  const rota = useRouter();
+
   const voltarAoMenu = () => {
-    navigation.navigate('Menu');
-  };
+    rota.push('/menu'); // Ajuste para o caminho da sua tela do menu
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.emoji}>☕</Text>
-      <Text style={styles.titulo}>Pedido Confirmado!</Text>
-      <Text style={styles.subtitulo}>
-        Obrigado por comprar com a gente. Seu pedido está sendo preparado com carinho! 💛
-      </Text>
-
+      <Text style={styles.texto}>Pedido confirmado com sucesso!</Text>
       <TouchableOpacity style={styles.botao} onPress={voltarAoMenu}>
-        <Text style={styles.textoBotao}>Voltar ao menu</Text>
+        <Text style={styles.botaoTexto}>Voltar ao Menu</Text>
       </TouchableOpacity>
     </View>
   );
 };
+
 
 export default OrderConfirmationScreen;
 
@@ -59,4 +59,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  botaoTexto: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold'
+  },
+
+    texto: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: '#4A2E14',
+      marginBottom: 24,
+      textAlign: 'center',
+    },
 });

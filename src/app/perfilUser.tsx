@@ -1,34 +1,29 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useState} from 'react';
+
+
+
+
+
+
+
+
+
 
 const usuarioMock = {
   nome: 'João da Cafeteria',
   email: 'joao@cafe.com',
 };
 
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = () => {
+  const router = useRouter();
+  const rota = useRouter();
   const handleLogout = () => {
     Alert.alert('Logout realizado!');
-    navigation.navigate('Login');
-  };
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>MEU PERFIL</Text>
-
-      <View style={styles.card}>
-        <Text style={styles.label}>Nome:</Text>
-        <Text style={styles.valor}>{usuarioMock.nome}</Text>
-
-        <Text style={styles.label}>E-mail:</Text>
-        <Text style={styles.valor}>{usuarioMock.email}</Text>
-      </View>
-
-      <TouchableOpacity style={styles.botao} onPress={handleLogout}>
-        <Text style={styles.textoBotao}>Sair</Text>
-      </TouchableOpacity>
-    </View>
-  );
+    rota.push('/login'); // Substitua pelo caminho correto se for diferente
+  };;
 };
 
 export default ProfileScreen;

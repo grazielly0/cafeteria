@@ -1,27 +1,39 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import { MaterialIcons } from "@expo/vector-icons";
 import EvilIcons from '@expo/vector-icons/EvilIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useNavigation } from '@react-navigation/native';
+import {useRouter} from "expo-router";
+import { useNavigation} from '@react-navigation/native';
+
+
 
 const carrinho = [
   {
     id: '1',
     nome: 'Cappuccino',
     descricao: 'Café com leite vaporizado',
-    // imagem: require('../assets/cappuccino.jpg'),
+    imagem: require('../../assets/images/cappuccino.jpg'),
   },
   {
     id: '2',
     nome: 'Croissant',
     descricao: 'Doce amanteigado',
-    // imagem: require('../assets/croissant.jpg'),
+    imagem: require('../../assets/images/croissant.jpg'),
   },
 ];
 
 const CartScreen = () => {
-  const navigation = useNavigation();
+
+  const rota = useRouter();
 
   const removerItem = (id) => {
     Alert.alert('Remover item', 'Tem certeza que deseja remover este item?', [
@@ -35,48 +47,50 @@ const CartScreen = () => {
   };
 
   const fazerPedido = () => {
-    navigation.navigate('DetalhesPedido');
+    rota.push('/detalhesPedido');
   };
 
   return (
     <View style={styles.container}>
+  <TouchableOpacity
+        style={styles.botaoVoltar}
+        onPress={() => rota.push('/')}
+      >
+        <MaterialIcons name="arrow-back" size={28} color="#A67C52" />
+      </TouchableOpacity>
 
-      {/* Cabeçalho */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.botaoVoltar}
-          onPress={() => navigation.navigate('index')}
-        >
-          <MaterialIcons name="arrow-back" size={24} color="#A67C52" />
-          <Text style={styles.textoBotaoVoltar}>Voltar</Text>
-        </TouchableOpacity>
+     
+  <View style={styles.icons}>
+    <TouchableOpacity onPress={() => rota.push('/pedido')}>
+    <MaterialIcons name="shopping-cart" size={24} color="#D09290" />
+  </TouchableOpacity>
 
-        <Text style={styles.titulo}>CARRINHO</Text>
+  <TouchableOpacity onPress={() => rota.push('/cadastro')}>
+        <AntDesign name="adduser" size={24} color="black" />
+      </TouchableOpacity>
+    </View>
+    
 
-        <View style={styles.icons}>
-          <MaterialIcons name="shopping-cart" size={24} color="#D09290" style={{marginRight: 16}} />
-          <AntDesign name="adduser" size={24} color="black" />
-        </View>
-      </View>
+      <Text style={styles.titulo}>CARRINHO</Text>
 
       <FlatList
         data={carrinho}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.itemContainer}>
-            <Image source={item.image} style={styles.imagem} />
+            <Image source={item.imagem} style={styles.imagem} />
             <View style={styles.info}>
               <Text style={styles.nome}>{item.nome}</Text>
               <Text style={styles.descricao}>{item.descricao}</Text>
             </View>
-            <View style={styles.icones}>
-              <TouchableOpacity onPress={() => editarItem(item.id)}>
-                <MaterialIcons style={styles.icon} name="edit" size={24} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => removerItem(item.id)} style={{ marginTop: 10 }}>
-                <EvilIcons name="trash" size={24} color="black" />
-              </TouchableOpacity>
-            </View>
+            <View style={styles.iconess}>
+  <TouchableOpacity onPress={() => editarItem(item.id)} style={styles.iconeAcao}>
+    <MaterialIcons name="edit" size={24} color="black" />
+  </TouchableOpacity>
+  <TouchableOpacity onPress={() => removerItem(item.id)} style={styles.iconeAcao}>
+    <EvilIcons name="trash" size={24} color="black" />
+  </TouchableOpacity>
+</View>
           </View>
         )}
         contentContainerStyle={{ paddingBottom: 20 }}
@@ -95,42 +109,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FCF8F3',
-    padding: 20,
+    paddingHorizontal: 16,
+    paddingTop: 40,
   },
-
-  // Cabeçalho com espaçamento entre os 3 elementos
-  header: {
+  topBar: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-
-  botaoVoltar: {
-    flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 8,
   },
-  textoBotaoVoltar: {
-    color: '#A67C52',
-    fontSize: 16,
-    marginLeft: 5,
+  botaoVoltar: {
+    padding: 4,
   },
-
+  icons: {
+    flexDirection: 'row',
+    gap: 16,
+  },
   titulo: {
     fontSize: 26,
     fontWeight: 'bold',
     color: '#A67C52',
-    // Para o título ficar no centro real, a largura deve ocupar o espaço entre os dois lados
-    // Mas como usamos space-between, ele estará centrado entre botaoVoltar e icons
     textAlign: 'center',
-    flex: 1,
+    marginBottom: 20,
   },
-
-  icons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-
   itemContainer: {
     flexDirection: 'row',
     backgroundColor: '#FFF',
@@ -166,6 +167,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  lixeira: {
+    marginTop: 10,
+  },
   botaoPedido: {
     backgroundColor: '#C89D72',
     paddingVertical: 14,
@@ -178,8 +182,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  icon: {
-    marginLeft: 30,
+  iconess: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  iconeAcao: {
+    marginHorizontal: 6,
+  },
+  
 });
 

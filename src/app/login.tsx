@@ -1,99 +1,39 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 
-const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-
-  const handleLogin = () => {
-    if (!email || !senha) {
-      Alert.alert('Preencha todos os campos');
-      return;
-    }
-
-    // Aqui você pode fazer a verificação com o backend ou Firebase
-    if (email === 'cliente@cafe.com' && senha === '123456') {
-      Alert.alert('Login realizado com sucesso!');
-      navigation.navigate('Menu');
-    } else {
-      Alert.alert('E-mail ou senha incorretos');
-    }
-  };
+export default function Login() {
+  const navigation = useNavigation();
+  const rota = useRouter();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>LOGIN</Text>
+      <Text style={styles.title}>FAÇA SEU LOGIN</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="E-mail"
-        placeholderTextColor="#999"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        placeholderTextColor="#999"
-        value={senha}
-        onChangeText={setSenha}
-        secureTextEntry
-      />
+      <View style={styles.formBox}>
+        <TextInput placeholder="E-mail" style={styles.input} />
+        <TextInput placeholder="Senha" style={styles.input} secureTextEntry />
 
-      <TouchableOpacity style={styles.botao} onPress={handleLogin}>
-        <Text style={styles.textoBotao}>Entrar</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>ENTRAR</Text>
+        </TouchableOpacity>
+      </View>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
-        <Text style={styles.link}>Ainda não tem conta? Cadastre-se</Text>
+      <TouchableOpacity onPress={() => rota.push('/cadastro')}>
+        <Text style={styles.linkText}>Ainda não tem cadastro? Clique aqui</Text>
       </TouchableOpacity>
     </View>
   );
-};
-
-export default LoginScreen;
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FCF8F3',
-    justifyContent: 'center',
-    paddingHorizontal: 30,
-  },
-  titulo: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#A67C52',
-    textAlign: 'center',
-    marginBottom: 30,
-  },
-  input: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 14,
-    fontSize: 16,
-    marginBottom: 15,
-    borderColor: '#DDD0C4',
-    borderWidth: 1,
-    color: '#333',
-  },
-  botao: {
-    backgroundColor: '#C89D72',
-    padding: 16,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  textoBotao: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  link: {
-    marginTop: 20,
-    textAlign: 'center',
-    color: '#7C4F2D',
-    textDecorationLine: 'underline',
-  },
+  container: { flex: 1, backgroundColor: '#F6F1EA', alignItems: 'center', justifyContent: 'center' },
+  title: { fontSize: 20, fontWeight: 'bold', marginBottom: 20 },
+  formBox: { backgroundColor: '#E7DCC9', padding: 20, borderRadius: 10, width: '85%' },
+  input: { backgroundColor: '#fff', marginBottom: 10, padding: 10, borderRadius: 5 },
+  button: { backgroundColor: '#D09290', padding: 12, borderRadius: 5, alignItems: 'center' },
+  buttonText: { color: '#fff', fontWeight: 'bold' },
+  linkText: { marginTop: 15, color: '#333', textDecorationLine: 'underline' },
 });
+

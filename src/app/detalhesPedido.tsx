@@ -1,24 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 
-const detalhesPedido = [
-  {
-    id: '1',
-    nome: 'Cappuccino',
-    quantidade: 1,
-    observacao: 'Com canela',
-  },
-  {
-    id: '2',
-    nome: 'Croissant',
-    quantidade: 2,
-    observacao: 'Sem recheio',
-  },
-];
+const OrderDetailsScreen = () => {
+  const rota = useRouter();
 
-const OrderDetailsScreen = ({ navigation }) => {
   const prosseguirPagamento = () => {
-    navigation.navigate('FormaPagamento');
+    rota.push('/formaPagamento'); // ou apenas 'FormaPagamento' se for uma rota relativa
   };
 
   return (

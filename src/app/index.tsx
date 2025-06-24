@@ -24,14 +24,15 @@ export default function Index() {
       <TouchableOpacity style={styles.button} onPress={() => rota.push('/Pedido')}>
         <Text style={styles.buttonText}>Pedidos</Text>
       </TouchableOpacity>
-
-      <TouchableOpacity style={styles.button} onPress={() => rota.push('/Menu')}>
-        <Text style={styles.buttonText}>Localização</Text>
-      </TouchableOpacity>
-
+      
       <TouchableOpacity style={styles.button} onPress={() => rota.push('/sobre')}>
         <Text style={styles.buttonText}>Sobre</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={() => rota.push('/localizacao')}>
+        <Text style={styles.buttonText}>Localização</Text>
+      </TouchableOpacity>
+
     </View>
   );
 }
