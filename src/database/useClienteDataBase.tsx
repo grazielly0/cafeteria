@@ -1,4 +1,35 @@
+import 'react-native-url-polyfill/auto';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = "https://ioqmugedsxyximfdhjzp.supabase.co";
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlvcW11Z2Vkc3h5eGltZmRoanpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA3OTYzMzYsImV4cCI6MjA2NjM3MjMzNn0.hWDaxjibqlA4frjLW3iw-cZFtpZ007gqWESkVeziVdo";
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    storage: AsyncStorage,
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: false,
+  },
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { useSQLiteContext } from 'expo-sqlite';
+
+
 
 export type ClienteDataBase = {
     id: number
@@ -34,26 +65,7 @@ export function useClienteDataBase(){
         }
     }//fim do inserir
 
-    async function consultar(name: string){
-        try{
-            const query = "select * from pessoa where nome like ?"//Interrogação vai substituir os parâmetros
-            const response = await dataBase.getAllSync<ClienteDataBase>(query, `%${name}%`)
-            return response
-        }catch(error)
-        {
-            throw(error)
-        }
-    }//fim do consultar
-
-    async function remove(id:number){
-        try{
-            await dataBase.execAsync("Delete from pessoa where id = " + id)
-        }
-        catch(error)
-        {
-            throw(error)
-        }
-    }//fim do excluir
+   
 
     async function atualizar(data: ClienteDataBase){
         const statement = await dataBase.prepareAsync(
@@ -75,5 +87,5 @@ export function useClienteDataBase(){
         }
     }//fim do atualizar
 
-    return { create, consultar, remove, atualizar }
+    return { create, atualizar }
 }

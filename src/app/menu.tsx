@@ -7,7 +7,7 @@ import { useRouter } from 'expo-router';
 
 const categorias = ['Cafés', 'Chás', 'Doces', 'Salgados'];
 
-const produtos = [
+const produtosold = [
 
   {
     id: '1',
@@ -15,13 +15,6 @@ const produtos = [
     preco: 'R$ 8,00',
     categoria: 'Cafés',
     imagem: require('../../assets/images/cafepre.jpg'),
-  },
-  {
-    id: '1',
-    nome: 'Café Americano',
-    preco: 'R$ 10,00',
-    categoria: 'Cafés',
-    imagem: require('../../assets/images/cafe1.jpg'),
   },
   {
     id: '2',
@@ -33,7 +26,7 @@ const produtos = [
   {
     id: '3',
     nome: 'Croissant recheado Chocolate',
-    preco: 'R$ 2,50',
+    preco: 'R$ 9,50',
     categoria: 'Doces',
     imagem: require('../../assets/images/croissant.jpg'),
   },
@@ -350,11 +343,44 @@ const produtos = [
     categoria: 'Cafés',
     imagem: require('../../assets/images/pingado.jpg'),
   },
+  {
+    id: '43',
+    nome: 'Café Americano',
+    preco: 'R$ 10,00',
+    categoria: 'Cafés',
+    imagem: require('../../assets/images/cafe1.jpg'),
+  },
 
 
 ];
+import { useEffect } from 'react';
+import { supabase } from '@/database/useClienteDataBase';
+
 
 export default function MenuScreen() {
+
+  const [produtos, setProdutos] = useState([]);
+
+  useEffect(() => {
+    const getProdutos = async () => {
+      try {
+        const { data: produtos, error } = await supabase.from('produto').select();
+
+        if (error) {
+          console.error('Error fetching produtos:', error.message);
+          return;
+        }
+
+        if (produtos && produtos.length > 0) {
+          setProdutos(produtos);
+        }
+      } catch (error) {
+        console.error('Error fetching produtos:', error.message);
+      }
+    };
+
+    getProdutos();
+  }, []);
   const navigation = useNavigation();
   const router = useRouter();
   const rota = useRouter();
@@ -410,7 +436,12 @@ export default function MenuScreen() {
         contentContainerStyle={styles.lista}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Image source={item.imagem} style={styles.imagem} />
+            <Image
+              source={{
+                uri: `https://ioqmugedsxyximfdhjzp.supabase.co/storage/v1/object/public/images/${item.imagem}`,
+              }}
+              style={styles.imagem}
+            />
             <Text style={styles.nome}>{item.nome}</Text>
             <Text style={styles.preco}>{item.preco}</Text>
             <TouchableOpacity style={styles.botaoCarrinho} onPress={() => handleAddToCart(item)}>

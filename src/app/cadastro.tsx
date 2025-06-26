@@ -4,39 +4,32 @@ import { MaterialIcons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from "expo-router";
 import { useState, useEffect } from 'react';
-import { useClienteDataBase, ClienteDataBase } from '@/database/useClienteDataBase';
+import { useClienteDataBase, supabase } from '@/database/useClienteDataBase';
 
 export default function cadastro() {
     const [nome, setNome] = useState("")
     const [telefone, setTelefone] = useState("")
     const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
-    const [cliente, setCliente] = useState<ClienteDataBase[]>()
+    const [cliente, setCliente] = useState()
     const clienteDataBase = useClienteDataBase()
     const rota = useRouter()
   
-    async function create(){
-        try{
-            const response = await clienteDataBase.create({
-                nome,
-                telefone,
-                email,
-                senha
-            })   
-  
-            //Mostrar que cadastrou
-            Alert.alert("Cliente cadastrado com o ID: " + response.insertedRowId)
-        }catch(error){
-            console.log(error)
-        }
-        setNome("");
-        setTelefone("");
-        setEmail("");
-        setSenha("");
-      
-      }//fim do inserir
- 
-
+    const create = async () => {
+      const { data, error } = await supabase
+        .from('produto')
+        .insert([
+          {
+            nome: 'Novo Produto',
+            telefone: '12.50',
+            categoria: 'Doces',
+            imagem: 'exemplo.jpg',
+          }
+        ]);
+      if (error) console.error(error);
+      else console.log('Inserido:', data);
+    };
+    
 
   return (
     <View style={styles.container}>
