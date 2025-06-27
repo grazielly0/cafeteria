@@ -21,7 +21,7 @@ export default function Index() {
         <Text style={styles.buttonText}>Menu</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={() => rota.push('/Pedido')}>
+      <TouchableOpacity style={styles.button} onPress={() => rota.push('/pedido')}>
         <Text style={styles.buttonText}>Pedidos</Text>
       </TouchableOpacity>
       

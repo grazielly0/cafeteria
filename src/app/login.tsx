@@ -2,10 +2,37 @@ import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
+import { supabase } from '@/database/useClienteDataBase';
 
 export default function Login() {
   const navigation = useNavigation();
   const rota = useRouter();
+
+
+
+  async function logar(){
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: "example@email.com",
+        password: "example-password",
+      
+      })
+    
+      if (error) {
+        console.error('Erro ao fazer login:', error.message)
+      } else {
+        console.log('Login realizado:', data)
+      }
+    } catch (err) {
+      console.error('Erro inesperado:', err.message)
+    }
+    
+  }
+  
+  
+
+  
+ 
 
   return (
     <View style={styles.container}>

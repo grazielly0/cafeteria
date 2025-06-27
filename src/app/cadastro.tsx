@@ -11,26 +11,40 @@ export default function cadastro() {
     const [telefone, setTelefone] = useState("")
     const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
-    const [cliente, setCliente] = useState()
     const clienteDataBase = useClienteDataBase()
     const rota = useRouter()
   
-    const create = async () => {
-      const { data, error } = await supabase
-        .from('produto')
-        .insert([
-          {
-            nome: 'Novo Produto',
-            telefone: '12.50',
-            categoria: 'Doces',
-            imagem: 'exemplo.jpg',
-          }
-        ]);
-      if (error) console.error(error);
-      else console.log('Inserido:', data);
-    };
+  
+    async function create(){
+        const {  data ,error } = await supabase.auth.signUp({
+          email: email,
+          password: senha,
+          options: {
+            data: {
+              first_name: nome,
+            },
+          },
+        })
+
+        data.user?.id
+          
+
+          //Mostrar que cadastrou
+          if (error) Alert.alert(error.message)
+          if (!data) Alert.alert('Cadastrado com sucesso!')
+      
+
+      setNome("");
+      setTelefone("");
+      setEmail("");
+      setSenha("");
+      
+  }//fim do inserir
+    
     
 
+
+   
   return (
     <View style={styles.container}>
       {/* Topo com botão de voltar, título e ícones */}
@@ -53,7 +67,6 @@ export default function cadastro() {
 
       <View style={styles.formBox}>
         <TextInput placeholder="Nome"   onChangeText={setNome} value={nome} style={styles.input} />
-        <TextInput placeholder="Telefone"   onChangeText={setTelefone} value={telefone} style={styles.input} />
         <TextInput placeholder="E-mail"  onChangeText={setEmail} value={email} style={styles.input} />
         <TextInput placeholder="Senha"  onChangeText={setSenha} value={senha}  style={styles.input} secureTextEntry />
 
@@ -67,7 +80,8 @@ export default function cadastro() {
       </TouchableOpacity>
     </View>
   );
-}
+  }
+
 
 const styles = StyleSheet.create({
   container: {

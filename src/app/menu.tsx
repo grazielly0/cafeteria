@@ -357,39 +357,45 @@ import { useEffect } from 'react';
 import { supabase } from '@/database/useClienteDataBase';
 
 
-export default function MenuScreen() {
 
-  const [produtos, setProdutos] = useState([]);
+export async function adicionarAoCarrinho(produtoId, quantidade = 1) {
+  // 1. Pega o usuário atual
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
 
-  useEffect(() => {
-    const getProdutos = async () => {
-      try {
-        const { data: produtos, error } = await supabase.from('produto').select();
+  if (userError || !user) {
+    console.error('Erro ao obter usuário:', userError?.message)
+    return { sucesso: false, mensagem: 'Usuário não autenticado' }
+  }
 
-        if (error) {
-          console.error('Error fetching produtos:', error.message);
-          return;
-        }
+  // 2. Insere no carrinho
+  const { error: insertError } = await supabase.from('carrinho').insert([
+    {
+      usuario_id: user.id,
+      produto_id: produtoId,
+      quantidade: quantidade,
+    }
+  ])
 
-        if (produtos && produtos.length > 0) {
-          setProdutos(produtos);
-        }
-      } catch (error) {
-        console.error('Error fetching produtos:', error.message);
-      }
-    };
+  if (insertError) {
+    console.error('Erro ao adicionar ao carrinho:', insertError.message)
+    return { sucesso: false, mensagem: insertError.message }
+  }
 
-    getProdutos();
-  }, []);
+  // 3. Sucesso
+  return { sucesso: true, mensagem: 'Produto adicionado ao carrinho!' }
+}
+
+  export default function MenuScreen() {
+
   const navigation = useNavigation();
   const router = useRouter();
   const rota = useRouter();
 
   const [categoriaAtiva, setCategoriaAtiva] = useState('Cafés');
-  const produtosFiltrados = produtos.filter(p => p.categoria === categoriaAtiva);
+  const produtosFiltrados = produtosold.filter(p => p.categoria === categoriaAtiva);
 
-  const handleAddToCart = (produto) => {
-    console.log(`Adicionado ao carrinho: ${produto.nome}`);
+  const handleAddToCart = (produtos) => {
+    console.log(`Adicionado ao carrinho: ${produtosold.nome}`);
   };
 
   return (

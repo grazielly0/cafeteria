@@ -31,6 +31,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 
 
 
+
 export type ClienteDataBase = {
     id: number
     nome: string
@@ -43,10 +44,12 @@ export function useClienteDataBase(){
     const dataBase = useSQLiteContext()
 
     async function create(data: Omit<ClienteDataBase, "id">){
+        const { data: todos, error } = await supabase.from('todos').select();
         const statement = await dataBase.prepareAsync(
             "insert into pessoa(nome, telefone, email, senha) values($nome, $telefone, $email, $senha)"
+            
         )
-
+       
         try{
             const result = await statement.executeAsync({
                 $nome: data.nome,
