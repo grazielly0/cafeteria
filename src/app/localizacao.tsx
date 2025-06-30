@@ -23,7 +23,7 @@ const LocalizacaoScreen = () => {
 
      
   <View style={styles.icons}>
-    <TouchableOpacity onPress={() => rota.push('/Pedido')}>
+    <TouchableOpacity onPress={() => rota.push('/pedido')}>
     <MaterialIcons name="shopping-cart" size={24} color="#D09290" />
   </TouchableOpacity>
 

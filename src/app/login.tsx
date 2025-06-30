@@ -1,38 +1,40 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { supabase } from '@/database/useClienteDataBase';
+import { makeRedirectUri } from 'expo-auth-session'
+import { useState, useEffect } from 'react'
+import { Session } from '@supabase/supabase-js'
+import Auth from '../components/Auth'
 
-export default function Login() {
-  const navigation = useNavigation();
+export default function login() {
   const rota = useRouter();
-
-
-
-  async function logar(){
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: "example@email.com",
-        password: "example-password",
-      
-      })
+  const redirectTo = makeRedirectUri()
+  async function login() {
     
-      if (error) {
-        console.error('Erro ao fazer login:', error.message)
-      } else {
-        console.log('Login realizado:', data)
-      }
-    } catch (err) {
-      console.error('Erro inesperado:', err.message)
-    }
-    
-  }
+    const { error } = await supabase.auth.signInWithOtp({
+      email: 'valid.email@supabase.io',
+      options: {
+        emailRedirectTo: redirectTo,
+      },
+    })
   
-  
-
-  
- 
+    const [session, setSession] = useState<Session | null>(null)
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+  }, [])
+    return (
+    <View>
+      <Auth/>
+      {session && session.user && <Text>{session.user.id}</Text>}
+    </View>
+  )
+}
 
   return (
     <View style={styles.container}>
@@ -42,7 +44,7 @@ export default function Login() {
         <TextInput placeholder="E-mail" style={styles.input} />
         <TextInput placeholder="Senha" style={styles.input} secureTextEntry />
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity onPress={() => rota.push('/')} style={styles.button}>
           <Text style={styles.buttonText}>ENTRAR</Text>
         </TouchableOpacity>
       </View>
@@ -52,7 +54,7 @@ export default function Login() {
       </TouchableOpacity>
     </View>
   );
-}
+  }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F6F1EA', alignItems: 'center', justifyContent: 'center' },

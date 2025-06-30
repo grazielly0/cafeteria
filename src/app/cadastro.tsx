@@ -8,36 +8,42 @@ import { useClienteDataBase, supabase } from '@/database/useClienteDataBase';
 
 export default function cadastro() {
     const [nome, setNome] = useState("")
-    const [telefone, setTelefone] = useState("")
     const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
-    const clienteDataBase = useClienteDataBase()
     const rota = useRouter()
   
   
     async function create(){
-        const {  data ,error } = await supabase.auth.signUp({
-          email: email,
-          password: senha,
-          options: {
-            data: {
-              first_name: nome,
+        try {
+          const { data, error } = await supabase.auth.signUp({
+            email : email,
+            password : senha,
+            
+            options: {
+              data: {
+                first_name: nome,
+              },
             },
-          },
-        })
-
-        data.user?.id
-          
-
-          //Mostrar que cadastrou
-          if (error) Alert.alert(error.message)
-          if (!data) Alert.alert('Cadastrado com sucesso!')
+          });
       
+          if (error) {
+           
+            if (error.message.includes('Usuário já cadastrado'))
+             {
+              Alert.alert('Erro', 'Este e-mail já está cadastrado.');
+            } else {
+              Alert.alert('Erro', error.message);
+            }
+            return;
+          }
 
-      setNome("");
-      setTelefone("");
-      setEmail("");
-      setSenha("");
+      
+          Alert.alert('Cadastro', 'Cadastro realizado! Verifique seu e-mail.');
+        } catch (err) {
+          const mensagem =
+            err instanceof Error ? err.message : JSON.stringify(err);
+          Alert.alert('Erro inesperado', mensagem);
+        }
       
   }//fim do inserir
     
@@ -66,9 +72,9 @@ export default function cadastro() {
       </View>
 
       <View style={styles.formBox}>
-        <TextInput placeholder="Nome"   onChangeText={setNome} value={nome} style={styles.input} />
-        <TextInput placeholder="E-mail"  onChangeText={setEmail} value={email} style={styles.input} />
-        <TextInput placeholder="Senha"  onChangeText={setSenha} value={senha}  style={styles.input} secureTextEntry />
+        <TextInput placeholder="Nome" style={styles.input} />
+        <TextInput placeholder="E-mail"   style={styles.input} />
+        <TextInput placeholder="Senha"  style={styles.input} secureTextEntry />
 
         <TouchableOpacity  onPress={create} style={styles.button}>
           <Text style={styles.buttonText}>CADASTRAR</Text>
