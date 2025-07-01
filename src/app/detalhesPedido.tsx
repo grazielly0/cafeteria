@@ -1,20 +1,21 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { useRouter } from 'expo-router';
 
 const OrderDetailsScreen = () => {
   const rota = useRouter();
 
   const prosseguirPagamento = () => {
-    rota.push('/formaPagamento'); // ou apenas 'FormaPagamento' se for uma rota relativa
+    rota.push('/formaPagamento');
   };
+
 
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>DETALHES DO PEDIDO</Text>
 
       <FlatList
-        data={detalhesPedido}
+        data={null}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.card}>

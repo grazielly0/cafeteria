@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
@@ -7,7 +7,7 @@ import { useRouter } from 'expo-router';
 
 const categorias = ['Cafés', 'Chás', 'Doces', 'Salgados'];
 
-const produtosold = [
+const produtos = [
 
   {
     id: '1',
@@ -353,51 +353,101 @@ const produtosold = [
 
 
 ];
-import { useEffect } from 'react';
+
 import { supabase } from '@/database/useClienteDataBase';
+import {  useEffect } from 'react';
 
 
 
-export async function adicionarAoCarrinho(produtoId, quantidade = 1) {
-  // 1. Pega o usuário atual
-  const { data: { user }, error: userError } = await supabase.auth.getUser()
+export async function buscarCarrinho() {
 
-  if (userError || !user) {
-    console.error('Erro ao obter usuário:', userError?.message)
-    return { sucesso: false, mensagem: 'Usuário não autenticado' }
+  useEffect(() => {
+    const carregarCarrinho = async () => {
+      const itens = await buscarCarrinho();
+      setCarrinho(itens); 
+    };
+  
+    carregarCarrinho();
+  }, []);
+  
+
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    alert("Você precisa estar logado.");
+    return;
   }
 
-  // 2. Insere no carrinho
-  const { error: insertError } = await supabase.from('carrinho').insert([
-    {
-      usuario_id: user.id,
-      produto_id: produtoId,
-      quantidade: quantidade,
-    }
-  ])
+  const { data, error } = await supabase
+    .from('carrinho')
+    .select(`
+      id,
+      quantidade,
+      produto:produto_id (
+        user_id,
+        nome,
+        preco,
+        imagem
+      )
+    `)
+    .eq('user_id', user.id);
 
-  if (insertError) {
-    console.error('Erro ao adicionar ao carrinho:', insertError.message)
-    return { sucesso: false, mensagem: insertError.message }
+  if (error) {
+    console.error('Erro ao buscar carrinho:', error.message);
+    return [];
   }
 
-  // 3. Sucesso
-  return { sucesso: true, mensagem: 'Produto adicionado ao carrinho!' }
+  return data; 
 }
+
+
+
+
+
+
+
+
 
   export default function MenuScreen() {
 
   const navigation = useNavigation();
   const router = useRouter();
   const rota = useRouter();
-
   const [categoriaAtiva, setCategoriaAtiva] = useState('Cafés');
-  const produtosFiltrados = produtosold.filter(p => p.categoria === categoriaAtiva);
+  const produtosFiltrados = produtos.filter(p => p.categoria === categoriaAtiva);
 
-  const handleAddToCart = (produtos) => {
-    console.log(`Adicionado ao carrinho: ${produtosold.nome}`);
-  };
+  
+const handleAddToCart = async (produto: any) => {
+  console.log(`Adicionado ao carrinho: ${produto.nome}`);
 
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+  if (!user) {
+    alert("Você precisa estar logado.");
+    return;
+  }
+
+  const { error } = await supabase
+    .from('carrinho_produto')
+    .insert([
+      {
+        user_id: user.id,
+        produto_id: produto.id, 
+        carrinho_id: carrinho.id, 
+        quantidade: "", 
+        
+        
+      },
+    ]);
+
+  if (error) {
+    console.error('Erro ao adicionar ao carrinho:', error.message);
+    alert("Erro ao adicionar ao carrinho.");
+  } else {
+    alert("Produto adicionado ao carrinho com sucesso!");
+  }
+   
+  }
   return (
     <View style={styles.container}>
   <TouchableOpacity
@@ -450,8 +500,8 @@ export async function adicionarAoCarrinho(produtoId, quantidade = 1) {
             />
             <Text style={styles.nome}>{item.nome}</Text>
             <Text style={styles.preco}>{item.preco}</Text>
-            <TouchableOpacity style={styles.botaoCarrinho} onPress={() => handleAddToCart(item)}>
-              <Text style={styles.textoBotaoCarrinho}>Adicionar ao carrinho</Text>
+            <TouchableOpacity onPress={() => handleAddToCart(produtos)}  style={styles.botaoCarrinho}>
+              <Text  style={styles.textoBotaoCarrinho}>Adicionar ao carrinho</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -459,6 +509,7 @@ export async function adicionarAoCarrinho(produtoId, quantidade = 1) {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

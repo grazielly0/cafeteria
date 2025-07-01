@@ -9,33 +9,20 @@ import Auth from '../components/Auth'
 
 export default function login() {
   const rota = useRouter();
-  const redirectTo = makeRedirectUri()
-  async function login() {
-    
+ 
+
+  async function signInWithEmail() {
+    const redirectTo = makeRedirectUri()
     const { error } = await supabase.auth.signInWithOtp({
       email: 'valid.email@supabase.io',
       options: {
         emailRedirectTo: redirectTo,
       },
-    })
-  
-    const [session, setSession] = useState<Session | null>(null)
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-  }, [])
-    return (
-    <View>
-      <Auth/>
-      {session && session.user && <Text>{session.user.id}</Text>}
-    </View>
-  )
-}
+    });
+      
+  }
 
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>FAÇA SEU LOGIN</Text>
@@ -44,8 +31,8 @@ export default function login() {
         <TextInput placeholder="E-mail" style={styles.input} />
         <TextInput placeholder="Senha" style={styles.input} secureTextEntry />
 
-        <TouchableOpacity onPress={() => rota.push('/')} style={styles.button}>
-          <Text style={styles.buttonText}>ENTRAR</Text>
+        <TouchableOpacity   onPress={signInWithEmail} style={styles.button}>
+          <Text   style={styles.buttonText}>ENTRAR</Text>
         </TouchableOpacity>
       </View>
 
