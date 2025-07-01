@@ -14,7 +14,7 @@ export default function login() {
   async function signInWithEmail() {
     const redirectTo = makeRedirectUri()
     const { error } = await supabase.auth.signInWithOtp({
-      email: 'valid.email@supabase.io',
+      email: '',
       options: {
         emailRedirectTo: redirectTo,
       },
