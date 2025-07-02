@@ -1,6 +1,6 @@
+import { useRouter } from "expo-router";
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import {useRouter} from "expo-router";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import logo from '../../assets/images/logo.png';
 
 
@@ -17,11 +17,11 @@ export default function Index() {
       <Text style={styles.title}>CAFETERIA</Text>
       <Text style={styles.subtitle}>Bem-vindos à cafeteria D'Amore</Text>
 
-      <TouchableOpacity style={styles.button} onPress={() => rota.push('/menu')}>
+      <TouchableOpacity style={styles.button} onPress={() => rota.push('/telaEntrega')}>
         <Text style={styles.buttonText}>Menu</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={() => rota.push('/pedido')}>
+      <TouchableOpacity style={styles.button} onPress={() => rota.push('/Pedido')}>
         <Text style={styles.buttonText}>Pedidos</Text>
       </TouchableOpacity>
       

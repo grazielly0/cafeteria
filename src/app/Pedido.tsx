@@ -1,20 +1,10 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
 import { MaterialIcons } from "@expo/vector-icons";
-import EvilIcons from '@expo/vector-icons/EvilIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import {useRouter} from "expo-router";
-import { useNavigation} from '@react-navigation/native';
+import EvilIcons from '@expo/vector-icons/EvilIcons';
+import { useRouter } from "expo-router";
+import React from 'react';
 
-
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const carrinho = [
   {
@@ -32,44 +22,32 @@ const carrinho = [
 ];
 
 const CartScreen = () => {
-
   const rota = useRouter();
 
-  const removerItem = (id) => {
-    Alert.alert('Remover item', 'Tem certeza que deseja remover este item?', [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Remover', onPress: () => console.log('Item removido:', id) },
-    ]);
-  };
-
-  const editarItem = (id) => {
-    Alert.alert('Editar item', 'Função de edição ainda não implementada.');
-  };
-
   const fazerPedido = () => {
-    rota.push('/detalhesPedido');
+    rota.push('/tipoPedido'); // Navega para a tela de escolha do tipo de pedido
   };
 
   return (
     <View style={styles.container}>
-  <TouchableOpacity
-        style={styles.botaoVoltar}
-        onPress={() => rota.push('/')}
-      >
-        <MaterialIcons name="arrow-back" size={28} color="#A67C52" />
-      </TouchableOpacity>
+      <View style={styles.topBar}>
+        <TouchableOpacity
+          style={styles.botaoVoltar}
+          onPress={() => rota.push('/')}
+        >
+          <MaterialIcons name="arrow-back" size={28} color="#A67C52" />
+        </TouchableOpacity>
 
-     
-  <View style={styles.icons}>
-    <TouchableOpacity onPress={() => rota.push('/pedido')}>
-    <MaterialIcons name="shopping-cart" size={24} color="#D09290" />
-  </TouchableOpacity>
+        <View style={styles.icons}>
+          <TouchableOpacity onPress={() => rota.push('/pedido')} style={styles.iconeAcao}>
+            <MaterialIcons name="shopping-cart" size={24} color="#D09290" />
+          </TouchableOpacity>
 
-  <TouchableOpacity onPress={() => rota.push('/cadastro')}>
-        <AntDesign name="adduser" size={24} color="black" />
-      </TouchableOpacity>
-    </View>
-    
+          <TouchableOpacity onPress={() => rota.push('/cadastro')} style={styles.iconeAcao}>
+            <AntDesign name="adduser" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+      </View>
 
       <Text style={styles.titulo}>CARRINHO</Text>
 
@@ -84,13 +62,13 @@ const CartScreen = () => {
               <Text style={styles.descricao}>{item.descricao}</Text>
             </View>
             <View style={styles.iconess}>
-  <TouchableOpacity onPress={() => editarItem(item.id)} style={styles.iconeAcao}>
-    <MaterialIcons name="edit" size={24} color="black" />
-  </TouchableOpacity>
-  <TouchableOpacity onPress={() => removerItem(item.id)} style={styles.iconeAcao}>
-    <EvilIcons name="trash" size={24} color="black" />
-  </TouchableOpacity>
-</View>
+              <TouchableOpacity onPress={() => String(item.id)} style={styles.iconeAcao}>
+                <MaterialIcons name="edit" size={24} color="black" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => String(item.id)} style={styles.iconeAcao}>
+                <EvilIcons name="trash" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
           </View>
         )}
         contentContainerStyle={{ paddingBottom: 20 }}
@@ -116,7 +94,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 14,
   },
   botaoVoltar: {
     padding: 4,
@@ -163,25 +141,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
-  icones: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  lixeira: {
-    marginTop: 10,
-  },
-  botaoPedido: {
-    backgroundColor: '#C89D72',
-    paddingVertical: 14,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 'auto',
-  },
-  textoBotao: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
   iconess: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -190,6 +149,18 @@ const styles = StyleSheet.create({
   iconeAcao: {
     marginHorizontal: 6,
   },
-  
+  botaoPedido: {
+    backgroundColor: '#C89D72',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  textoBotao: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 });
 
+ 

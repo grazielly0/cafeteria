@@ -1,19 +1,30 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
-import { useRouter } from "expo-router";
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+    Alert,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 
 const opcoesPagamento = ['Dinheiro', 'Cartão de Crédito', 'Cartão de Débito', 'Pix'];
-const opcoesCartao = ['Aproximação', 'Com senha'];
 
 const PaymentScreen = () => {
   const [selecionado, setSelecionado] = useState(null);
-  const [formaCartao, setFormaCartao] = useState(null);
   const [chavePix, setChavePix] = useState('');
   const [pixGerado, setPixGerado] = useState(false);
+  const [cartao, setCartao] = useState({
+    numero: '',
+    validade: '',
+    cvv: '',
+  });
+
   const navigation = useNavigation();
   const rota = useRouter();
 
@@ -25,9 +36,7 @@ const PaymentScreen = () => {
 
   const handleSelecionar = (opcao) => {
     setSelecionado(opcao);
-    setFormaCartao(null); // Limpa formaCartao se mudar de opção
     setPixGerado(false);
-
     if (opcao === 'Pix') {
       gerarPix();
     }
@@ -41,28 +50,28 @@ const PaymentScreen = () => {
 
     if (
       (selecionado === 'Cartão de Crédito' || selecionado === 'Cartão de Débito') &&
-      !formaCartao
+      (!cartao.numero || !cartao.validade || !cartao.cvv)
     ) {
-      Alert.alert('Informe se é aproximação ou com senha');
+      Alert.alert('Preencha todos os dados do cartão');
       return;
     }
 
     Alert.alert('Compra finalizada!', `Pagamento via ${selecionado}. Obrigado!`);
 
-    // Limpar estados após finalização
+    // Limpar campos e resetar estados
+    setCartao({
+      numero: '',
+      validade: '',
+      cvv: '',
+    });
     setSelecionado(null);
-    setFormaCartao(null);
-    setChavePix('');
     setPixGerado(false);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <TouchableOpacity
-          style={styles.botaoVoltar}
-          onPress={() => rota.push('/')}
-        >
+        <TouchableOpacity style={styles.botaoVoltar} onPress={() => rota.push('/')}>
           <MaterialIcons name="arrow-back" size={28} color="#A67C52" />
         </TouchableOpacity>
 
@@ -101,38 +110,38 @@ const PaymentScreen = () => {
         ))}
       </View>
 
-      {/* PERGUNTA: Aproximação ou com senha */}
+      {/* FORMULÁRIO CARTÃO */}
       {(selecionado === 'Cartão de Crédito' || selecionado === 'Cartão de Débito') && (
         <View style={styles.areaPix}>
-          <Text style={styles.labelPix}>Como será o pagamento?</Text>
-          {opcoesCartao.map((forma) => (
-            <TouchableOpacity
-              key={forma}
-              style={[
-                styles.botaoOpcao,
-                formaCartao === forma && styles.botaoSelecionado,
-              ]}
-              onPress={() => setFormaCartao(forma)}
-            >
-              <Text
-                style={[
-                  styles.textoOpcao,
-                  formaCartao === forma && styles.textoSelecionado,
-                ]}
-              >
-                {forma}
-              </Text>
-            </TouchableOpacity>
-          ))}
-          {formaCartao && (
-            <Text style={{ marginTop: 12, fontSize: 16, color: '#5B3D1D' }}>
-              Insira o cartão na máquina.
-            </Text>
-          )}
+          <Text style={styles.labelPix}>Insira os dados do cartão:</Text>
+          <TextInput
+            placeholder="Número do Cartão"
+            placeholderTextColor="#999"
+            keyboardType="numeric"
+            style={styles.input}
+            value={cartao.numero}
+            onChangeText={(text) => setCartao({ ...cartao, numero: text })}
+          />
+          <TextInput
+            placeholder="Validade (MM/AA)"
+            placeholderTextColor="#999"
+            style={styles.input}
+            value={cartao.validade}
+            onChangeText={(text) => setCartao({ ...cartao, validade: text })}
+          />
+          <TextInput
+            placeholder="CVV"
+            placeholderTextColor="#999"
+            keyboardType="numeric"
+            secureTextEntry
+            style={styles.input}
+            value={cartao.cvv}
+            onChangeText={(text) => setCartao({ ...cartao, cvv: text })}
+          />
         </View>
       )}
 
-      {/* QR Code Pix */}
+      {/* QR CODE PIX */}
       {pixGerado && (
         <View style={styles.areaPix}>
           <Text style={styles.labelPix}>Chave Pix:</Text>
@@ -230,5 +239,14 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     color: '#000',
   },
+  input: {
+    width: '100%',
+    backgroundColor: '#fff',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: '#C89D72',
+    color: '#000',
+  },
 });
-

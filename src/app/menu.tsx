@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const categorias = ['Cafés', 'Chás', 'Doces', 'Salgados'];
 
@@ -355,7 +355,7 @@ const produtos = [
 ];
 
 import { supabase } from '@/database/useClienteDataBase';
-import {  useEffect } from 'react';
+import { useEffect } from 'react';
 
 
 

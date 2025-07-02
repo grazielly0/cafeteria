@@ -1,10 +1,9 @@
-import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, TextInput, Alert } from 'react-native';
+import { supabase } from '@/database/useClienteDataBase';
 import { MaterialIcons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from "expo-router";
-import { useState, useEffect } from 'react';
-import { useClienteDataBase, supabase } from '@/database/useClienteDataBase';
+import React, { useState } from 'react';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function cadastro() {
     const [nome, setNome] = useState("")

@@ -1,8 +1,8 @@
-import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
+import PedidoScreen from '../app/Pedido';
 import MenuScreen from '../app/menu';
-import PedidoScreen from '../app/pedido';
 import { CartProvider } from '../context/CartContext';
 
 const Stack = createNativeStackNavigator();

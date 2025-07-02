@@ -1,7 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useState} from 'react';
+import { Alert, StyleSheet } from 'react-native';
 
 
 
