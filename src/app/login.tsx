@@ -5,21 +5,31 @@ import { supabase } from '@/database/useClienteDataBase';
 import { makeRedirectUri } from 'expo-auth-session'
 import { useState, useEffect } from 'react'
 import { Session } from '@supabase/supabase-js'
-import Auth from '../components/Auth'
 
 export default function login() {
-  const rota = useRouter();
+  const [email, setEmail] = useState("")
+  const [senha, setSenha] = useState("")
+  const rota = useRouter()
  
 
   async function signInWithEmail() {
     const redirectTo = makeRedirectUri()
-    const { error } = await supabase.auth.signInWithOtp({
-      email: '',
-      options: {
-        emailRedirectTo: redirectTo,
-      },
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: senha,
     });
-      
+
+    
+    if (error) {
+           
+      if (error.message.includes('Usuário não cadastrado'))
+       {
+        Alert.alert('Erro', 'Login realizado com sucesso!.');
+      } else {
+        Alert.alert('Erro', error.message);
+      }
+      return;
+    }
   }
 
   
@@ -28,8 +38,8 @@ export default function login() {
       <Text style={styles.title}>FAÇA SEU LOGIN</Text>
 
       <View style={styles.formBox}>
-        <TextInput placeholder="E-mail" style={styles.input} />
-        <TextInput placeholder="Senha" style={styles.input} secureTextEntry />
+        <TextInput placeholder="E-mail"  onChangeText={setEmail}style={styles.input} />
+        <TextInput placeholder="Senha" onChangeText={setSenha}  style={styles.input} secureTextEntry />
 
         <TouchableOpacity   onPress={signInWithEmail} style={styles.button}>
           <Text   style={styles.buttonText}>ENTRAR</Text>

@@ -12,44 +12,52 @@ import { MaterialIcons } from "@expo/vector-icons";
 import EvilIcons from '@expo/vector-icons/EvilIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import {useRouter} from "expo-router";
-import { useNavigation} from '@react-navigation/native';
+import { supabase } from '@/database/useClienteDataBase';
+import {  useEffect,useState } from 'react';
+import MenuScreen from './menu';
 
 
 
-const carrinho = [
-  {
-    id: '1',
-    nome: 'Cappuccino',
-    descricao: 'Café com leite vaporizado',
-    imagem: require('../../assets/images/cappuccino.jpg'),
-  },
-  {
-    id: '2',
-    nome: 'Croissant',
-    descricao: 'Doce amanteigado',
-    imagem: require('../../assets/images/croissant.jpg'),
-  },
-];
+export default function PedidoScreen() {
+      const [pedidos, setPedidos] = useState<any[]>([]);
+      const [id, setId] = useState("")
+      const [carrinhoId, setcarrinhoId] = useState("")
+      const [produtoId, setProdutoId] = useState("")
+      const [quantidade, setQuantidade] = useState("")
+      const rota = useRouter()
 
-const CartScreen = () => {
+    async function details(item:any){
+    
+      setId(String(item.id))
+      setcarrinhoId(item.carrinhoId)
+      setProdutoId(item.produtoId)
+      setQuantidade(item.quantidade)
+    }
 
-  const rota = useRouter();
 
-  const removerItem = (id) => {
-    Alert.alert('Remover item', 'Tem certeza que deseja remover este item?', [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Remover', onPress: () => console.log('Item removido:', id) },
-    ]);
-  };
+    async function pegarPedido() {
+    const { data, error } = await supabase
+      .from('carrinho_produto')
+      .select('id, carrinhoId,  produtoId(
+        id,
+        nome
+        
+      ) ,quantidade')
+      .order('id', { ascending: false })
 
-  const editarItem = (id) => {
-    Alert.alert('Editar item', 'Função de edição ainda não implementada.');
-  };
 
-  const fazerPedido = () => {
-    rota.push('/detalhesPedido');
-  };
+      if (error) {
+        console.error('Erro ao buscar pedidos:', error.message);
+      } else {
+        setPedidos(data || []);
+      }
+    }
 
+    const fazerPedido = () => {
+      rota.push('/detalhesPedido');
+    };
+  
+  
   return (
     <View style={styles.container}>
   <TouchableOpacity
@@ -73,25 +81,25 @@ const CartScreen = () => {
 
       <Text style={styles.titulo}>CARRINHO</Text>
 
-      <FlatList
-        data={carrinho}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
-            <Image source={item.imagem} style={styles.imagem} />
-            <View style={styles.info}>
-              <Text style={styles.nome}>{item.nome}</Text>
-              <Text style={styles.descricao}>{item.descricao}</Text>
-            </View>
-            <View style={styles.iconess}>
-  <TouchableOpacity onPress={() => editarItem(item.id)} style={styles.iconeAcao}>
-    <MaterialIcons name="edit" size={24} color="black" />
-  </TouchableOpacity>
-  <TouchableOpacity onPress={() => removerItem(item.id)} style={styles.iconeAcao}>
-    <EvilIcons name="trash" size={24} color="black" />
-  </TouchableOpacity>
-</View>
-          </View>
+              <FlatList
+                data={pedidos}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <View style={styles.itemContainer}>
+                    
+                    <View style={styles.info}>
+                      <Text style={styles.nome}>{item.nome}</Text>
+                      <Text style={styles.descricao}>{item.descricao}</Text>
+                    </View>
+                    <View style={styles.iconess}>
+                    <TouchableOpacity onPress={() => String(item.id)} style={styles.iconeAcao}>
+                      <MaterialIcons name="edit" size={24} color="black" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => String(item.id)} style={styles.iconeAcao}>
+                      <EvilIcons name="trash" size={24} color="black" />
+                    </TouchableOpacity>
+                  </View>
+                  </View>
         )}
         contentContainerStyle={{ paddingBottom: 20 }}
       />
@@ -102,8 +110,6 @@ const CartScreen = () => {
     </View>
   );
 };
-
-export default CartScreen;
 
 const styles = StyleSheet.create({
   container: {

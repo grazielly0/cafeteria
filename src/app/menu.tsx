@@ -7,446 +7,171 @@ import { useRouter } from 'expo-router';
 
 const categorias = ['Cafés', 'Chás', 'Doces', 'Salgados'];
 
-const produtos = [
-
-  {
-    id: '1',
-    nome: 'Café Preto',
-    preco: 'R$ 8,00',
-    categoria: 'Cafés',
-    imagem: require('../../assets/images/cafepre.jpg'),
-  },
-  {
-    id: '2',
-    nome: 'Cappuccino',
-    preco: 'R$ 11,00',
-    categoria: 'Cafés',
-    imagem: require('../../assets/images/cappuccino.jpg'),
-  },
-  {
-    id: '3',
-    nome: 'Croissant recheado Chocolate',
-    preco: 'R$ 9,50',
-    categoria: 'Doces',
-    imagem: require('../../assets/images/croissant.jpg'),
-  },
-  {
-    id: '4',
-    nome: 'Café com leite',
-    preco: 'R$ 9,00',
-    categoria: 'Cafés',
-    imagem: require('../../assets/images/cafeCleite.jpg'),
-  },
-  {
-    id: '5',
-    nome: 'Cappuccino Italiano',
-    preco: 'R$  12,00',
-    categoria: 'Cafés',
-    imagem: require('../../assets/images/italiano.jpg'),
-  },
-  {
-    id: '6',
-    nome: 'Mocha',
-    preco: 'R$ 13,00',
-    categoria: 'Cafés',
-    imagem: require('../../assets/images/mocha.jpg'),
-  },
-  {
-    id: '7',
-    nome: 'Latte Macchiato',
-    preco: 'R$ 12,00',
-    categoria: 'Cafés',
-    imagem: require('../../assets/images/latteMacch.jpg'),
-  },
-
-  {
-    id: '8',
-    nome: 'Macaccino',
-    preco: 'R$ 12,00',
-    categoria: 'Cafés',
-    imagem: require('../../assets/images/macaccino.jpg'),
-  },
-  {
-    id: '9',
-    nome: 'Café Gelado com Baunilha',
-    preco: 'R$ 14,00',
-    categoria: 'Cafés',
-    imagem: require('../../assets/images/affogato.jpg'),
-  },
-
-  {
-    id: '10',
-    nome: 'Chá de Camomila',
-    preco: 'R$  8,00',
-    categoria: 'Chás',
-    imagem: require('../../assets/images/camomila.jpg'),
-  },
-
-  {
-    id: '11',
-    nome: 'Chá Detox',
-    preco: 'R$ 9,00',
-    categoria: 'Chás',
-    imagem: require('../../assets/images/detox.jpg'),
-  },
-
-  {
-    id: '12',
-    nome: 'Chá de frutas Vermelhas',
-    preco: 'R$ 9,00',
-    categoria: 'Chás',
-    imagem: require('../../assets/images/frutRed.jpg'),
-  },
-
-  {
-    id: '13',
-    nome: 'Cookie recheado e tradicional',
-    preco: 'R$ 6,00',
-    categoria: 'Doces',
-    imagem: require('../../assets/images/cookie.jpg'),
-  },
-
-  {
-    id: '14',
-    nome: 'Brownie de Chocolate',
-    preco: 'R$ 12,00',
-    categoria: 'Doces',
-    imagem: require('../../assets/images/brownie.jpg'),
-  },
-
-  {
-    id: '15',
-    nome: 'Donuts',
-    preco: 'R$ 7,00',
-    categoria: 'Doces',
-    imagem: require('../../assets/images/donuts.jpg'),
-  },
-
-  {
-    id: '16',
-    nome: 'Cheescake',
-    preco: 'R$ 12,50',
-    categoria: 'Doces',
-    imagem: require('../../assets/images/chescake.jpg'),
-  },
-  {
-    id: '16',
-    nome: 'Torta de Limão',
-    preco: 'R$ 13,50',
-    categoria: 'Doces',
-    imagem: require('../../assets/images/torta.jpg'),
-  },
-  {
-    id: '17',
-    nome: 'Chá Gelado',
-    preco: 'R$ 10,50',
-    categoria: 'Chás',
-    imagem: require('../../assets/images/chaCold.jpg'),
-  },
-  {
-    id: '18',
-    nome: 'Chá Preto',
-    preco: 'R$ 8,00',
-    categoria: 'Chás',
-    imagem: require('../../assets/images/chápreo.jpg'),
-  },
-  {
-    id: '19',
-    nome: 'Chá Verde com Hotelã',
-    preco: 'R$ 9,00',
-    categoria: 'Chás',
-    imagem: require('../../assets/images/cháVerHorte.webp'),
-  },
-
-  {
-    id: '20',
-    nome: 'Bolo de Chocolate',
-    preco: 'R$ 10,00',
-    categoria: 'Doces',
-    imagem: require('../../assets/images/bolodechoco.jpg'),
-  },
-
-  {
-    id: '21',
-    nome: 'Bolo de Cenoura com Brigadeiro',
-    preco: 'R$ 10,50',
-    categoria: 'Doces',
-    imagem: require('../../assets/images/boloCeno.jpg'),
-  },
-
-  {
-    id: '22',
-    nome: 'Coxinha de Frango com Catupiry',
-    preco: 'R$ 12,50',
-    categoria: 'Salgados',
-    imagem: require('../../assets/images/CoxiCatu.webp'),
-  },
-
-  {
-    id: '23',
-    nome: 'Empada de Palmito',
-    preco: 'R$ 14,50',
-    categoria: 'Salgados',
-    imagem: require('../../assets/images/empada.jpg'),
-  },
-
-  {
-    id: '24',
-    nome: 'Pão de Queijo',
-    preco: 'R$ 8,50',
-    categoria: 'Salgados',
-    imagem: require('../../assets/images/paoQuei.webp'),
-  },
-
-  {
-    id: '25',
-    nome: 'Quiche de Alho-Poró',
-    preco: 'R$ 12,50',
-    categoria: 'Salgados',
-    imagem: require('../../assets/images/quecheAlho.avif'),
-  },
-
-  {
-    id: '26',
-    nome: 'Sanduíche Natural de Frango',
-    preco: 'R$ 10,00',
-    categoria: 'Salgados',
-    imagem: require('../../assets/images/sanatural.webp'),
-  },
-
-  {
-    id: '27',
-    nome: 'Expresso Romano',
-    preco: 'R$  11,00',
-    categoria: 'Cafés',
-    imagem: require('../../assets/images/expressoRoma.jpg'),
-  },
-  
-  {
-    id: '28',
-    nome: 'Macchiato Caramelizado',
-    preco: 'R$  13,00',
-    categoria: 'Cafés',
-    imagem: require('../../assets/images/macchiatoCara.jpg'),
-  },
-
-  {
-    id: '29',
-    nome: 'Latte de Lavanda',
-    preco: 'R$ 15,50',
-    categoria: 'Chás',
-    imagem: require('../../assets/images/lattelavan.jpg'),
-  },
-
-  {
-    id: '30',
-    nome: 'Golden Milk',
-    preco: 'R$ 12,50',
-    categoria: 'Chás',
-    imagem: require('../../assets/images/golden.jpg'),
-  },
-
-  {
-    id: '31',
-    nome: 'Chá de Erva-Doce com Anis ',
-    preco: 'R$ 8,00',
-    categoria: 'Chás',
-    imagem: require('../../assets/images/chaervado.jpg'),
-  },
-
-  {
-    id: '32',
-    nome: 'Matcha Latte ',
-    preco: 'R$ 12,50',
-    categoria: 'Chás',
-    imagem: require('../../assets/images/matcha.jpg'),
-  },
-
-  {
-    id: '33',
-    nome: 'Chá de Hibisco com Maçã ',
-    preco: 'R$ 8,00',
-    categoria: 'Chás',
-    imagem: require('../../assets/images/chama.jpg'),
-  },
-
-
-  {
-    id: '34',
-    nome: 'Chá de Hortelã ',
-    preco: 'R$ 6,50',
-    categoria: 'Chás',
-    imagem: require('../../assets/images/chahorte.jpg'),
-  },
-
-  {
-    id: '35',
-    nome: 'Bolo Red Velvet',
-    preco: 'R$ 12,50',
-    categoria: 'Doces',
-    imagem: require('../../assets/images/bolored.jpg'),
-  },
-
-  {
-    id: '36',
-    nome: 'Mini Pizza de Calabresa',
-    preco: 'R$ 12,00',
-    categoria: 'Salgados',
-    imagem: require('../../assets/images/minipizza.jpg'),
-  },
-
-  
-  {
-    id: '37',
-    nome: 'Mini Hambúrguer Artesanal',
-    preco: 'R$ 13,00',
-    categoria: 'Salgados',
-    imagem: require('../../assets/images/hambu.jpg'),
-  },
-
-  {
-    id: '38',
-    nome: 'Esfiha de Carne',
-    preco: 'R$ 9,00',
-    categoria: 'Salgados',
-    imagem: require('../../assets/images/esfi.jpg'),
-  },
-
-  {
-    id: '39',
-    nome: 'Empada de Frango',
-    preco: 'R$ 14,00',
-    categoria: 'Salgados',
-    imagem: require('../../assets/images/empa.jpg'),
-  },
-
-  {
-    id: '40',
-    nome: 'Misto Quente',
-    preco: 'R$ 12,00',
-    categoria: 'Salgados',
-    imagem: require('../../assets/images/misto.jpg'),
-  },
-
-  {
-    id: '41',
-    nome: 'Pavê de Chocolate e Avelã ',
-    preco: 'R$ 14,50',
-    categoria: 'Doces',
-    imagem: require('../../assets/images/pavechoco.jpg'),
-  },
-
-  {
-    id: '42',
-    nome: 'Café Pingado ',
-    preco: 'R$ 14,50',
-    categoria: 'Cafés',
-    imagem: require('../../assets/images/pingado.jpg'),
-  },
-  {
-    id: '43',
-    nome: 'Café Americano',
-    preco: 'R$ 10,00',
-    categoria: 'Cafés',
-    imagem: require('../../assets/images/cafe1.jpg'),
-  },
-
-
-];
-
 import { supabase } from '@/database/useClienteDataBase';
 import {  useEffect } from 'react';
 
-
-
 export async function buscarCarrinho() {
-
-  useEffect(() => {
-    const carregarCarrinho = async () => {
-      const itens = await buscarCarrinho();
-      setCarrinho(itens); 
-    };
-  
-    carregarCarrinho();
-  }, []);
-  
-
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: userData } = await supabase.auth.getUser()
+  const user = userData?.user
 
   if (!user) {
-    alert("Você precisa estar logado.");
-    return;
+    alert('Você precisa estar logado.')
+    return null
   }
 
-  const { data, error } = await supabase
+  
+  const { data: carrinhoExistente, error: carrinhoError } = await supabase
     .from('carrinho')
-    .select(`
-      id,
-      quantidade,
-      produto:produto_id (
-        user_id,
-        nome,
-        preco,
-        imagem
-      )
-    `)
-    .eq('user_id', user.id);
+    .select('id')
+    .eq('user_id', user.id)
+    .limit(1)
 
-  if (error) {
-    console.error('Erro ao buscar carrinho:', error.message);
-    return [];
+  console.log(carrinhoExistente)
+  if (carrinhoError) {
+    console.error('Erro ao buscar carrinho:', carrinhoError.message)
+    return null
   }
 
-  return data; 
+  let carrinhoId
+
+  if (carrinhoExistente && carrinhoExistente.length > 0) {
+    carrinhoId = carrinhoExistente;
+  } else {
+    const { data: novoCarrinho, error: insertError } = await supabase
+      .from('carrinho')
+      .insert([{ user_id: user.id }])
+      .select()
+      .single()
+
+    if (insertError) {
+      console.error('Erro ao criar carrinho:', insertError.message)
+      return null
+    }
+
+    carrinhoId = novoCarrinho.id
+  }
+
+  console.log (carrinhoId)
+
+  return carrinhoId
 }
 
 
 
+export default function MenuScreen() {
 
+  type Produto = {
+    id: string;
+    nome: string;
+    preco: number;
+    categoria: string;
+    imagem: string;
+  };
 
-
-
-
-
-  export default function MenuScreen() {
-
-  const navigation = useNavigation();
-  const router = useRouter();
   const rota = useRouter();
   const [categoriaAtiva, setCategoriaAtiva] = useState('Cafés');
-  const produtosFiltrados = produtos.filter(p => p.categoria === categoriaAtiva);
-
   
-const handleAddToCart = async (produto: any) => {
-  console.log(`Adicionado ao carrinho: ${produto.nome}`);
-
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-  if (!user) {
-    alert("Você precisa estar logado.");
-    return;
-  }
-
-  const { error } = await supabase
-    .from('carrinho_produto')
-    .insert([
-      {
-        user_id: user.id,
-        produto_id: produto.id, 
-        carrinho_id: carrinho.id, 
-        quantidade: "", 
+  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [error, setError] = useState<any[]>([]);
+  
+  async function list(){
+    try {
+        const { data: produtos, error: error } = await supabase.from('produto').select();
+          
+        if (error) {
+          console.error('Erro ao buscar os produtos:', error.message);          
+        }
         
-        
-      },
-    ]);
+        if (produtos && produtos.length > 0) {
+          setProdutos(produtos)
+        }
+        return;
+    } catch (error) {
+      console.error('Erro ao buscar os produtos:', (error as Error).message);
+    }
+  };
 
-  if (error) {
-    console.error('Erro ao adicionar ao carrinho:', error.message);
-    alert("Erro ao adicionar ao carrinho.");
-  } else {
-    alert("Produto adicionado ao carrinho com sucesso!");
-  }
-   
+  useEffect(() => {list()}, [] );
+
+  const produtosFiltrados = produtos.filter(p => p.categoria === categoriaAtiva);
+  const [nome, setNome] = useState<any[]>([]);
+  const [id, setId] = useState<any[]>([]);
+  const [carrinhoId, setcarrinhoId] = useState('');
+  const [quantidade, setQuantidade] = useState(1);
+
+
+
+
+  const handleAddToCart = async (produto: any) => {
+
+
+    const { data: userData } = await supabase.auth.getUser()
+    const user = userData?.user
+  
+    if (!user) {
+      alert('Você precisa estar logado.')
+      return null
+    }
+  
+    
+    const { data: carrinhoExistente, error: carrinhoError } = await supabase
+      .from('carrinho')
+      .select('id')
+      .eq('user_id', user.id)
+      .limit(1)
+  
+    if (carrinhoError) {
+      console.error('Erro ao buscar carrinho:', carrinhoError.message)
+      return null
+    }
+  
+    let carrinhoId
+  
+    if (carrinhoExistente && carrinhoExistente.length > 0) {
+      carrinhoId = carrinhoExistente[0].id;
+    } else {
+      const { data: novoCarrinho, error: insertError } = await supabase
+        .from('carrinho')
+        .insert([{ user_id: user.id }])
+        .select()
+        .single()
+  
+      if (insertError) {
+        console.error('Erro ao criar carrinho:', insertError.message)
+        return null
+      }
+      produto = produto.id
+      carrinhoId = novoCarrinho.id
+    }   
+
+      if (!user) {
+        alert("Você precisa estar logado.");
+        return;
+      }
+      
+      const { error } = await supabase
+      .from('carrinho_produto')
+      .insert([
+        {       
+          carrinho_id: carrinhoId ,
+          produto_id: produto.id,
+          quantidade: quantidade,
+        }
+  
+      ]);   
+
+      if (!carrinhoId || !produto.id) {
+        console.error('ID inválido para carrinho ou produto');
+        return;
+      }
+      
+
+      if (error) {
+        console.error('Erro ao adicionar ao carrinho:', error.message);
+        alert("Erro ao adicionar ao carrinho.");
+      } else {
+        alert("Produto adicionado ao carrinho com sucesso!");
+      }
   }
   return (
     <View style={styles.container}>
@@ -487,7 +212,7 @@ const handleAddToCart = async (produto: any) => {
 
       <FlatList
         data={produtosFiltrados}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) =>  item.id}
         numColumns={2}
         contentContainerStyle={styles.lista}
         renderItem={({ item }) => (
@@ -500,7 +225,7 @@ const handleAddToCart = async (produto: any) => {
             />
             <Text style={styles.nome}>{item.nome}</Text>
             <Text style={styles.preco}>{item.preco}</Text>
-            <TouchableOpacity onPress={() => handleAddToCart(produtos)}  style={styles.botaoCarrinho}>
+            <TouchableOpacity onPress={() => handleAddToCart(item)}  style={styles.botaoCarrinho}>
               <Text  style={styles.textoBotaoCarrinho}>Adicionar ao carrinho</Text>
             </TouchableOpacity>
           </View>

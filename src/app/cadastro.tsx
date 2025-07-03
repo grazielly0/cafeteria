@@ -18,7 +18,6 @@ export default function cadastro() {
           const { data, error } = await supabase.auth.signUp({
             email : email,
             password : senha,
-            
             options: {
               data: {
                 first_name: nome,
@@ -72,9 +71,9 @@ export default function cadastro() {
       </View>
 
       <View style={styles.formBox}>
-        <TextInput placeholder="Nome" style={styles.input} />
-        <TextInput placeholder="E-mail"   style={styles.input} />
-        <TextInput placeholder="Senha"  style={styles.input} secureTextEntry />
+        <TextInput placeholder="Nome" onChangeText={setNome} value={nome}  style={styles.input} />
+        <TextInput placeholder="E-mail"  onChangeText={setEmail} style={styles.input} />
+        <TextInput placeholder="Senha"    onChangeText={setSenha} style={styles.input} secureTextEntry />
 
         <TouchableOpacity  onPress={create} style={styles.button}>
           <Text style={styles.buttonText}>CADASTRAR</Text>
