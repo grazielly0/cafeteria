@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 
 const categorias = ['Cafés', 'Chás', 'Doces', 'Salgados'];
@@ -140,7 +139,6 @@ export default function MenuScreen() {
         console.error('Erro ao criar carrinho:', insertError.message)
         return null
       }
-      produto = produto.id
       carrinhoId = novoCarrinho.id
     }   
 
@@ -171,8 +169,13 @@ export default function MenuScreen() {
         alert("Erro ao adicionar ao carrinho.");
       } else {
         alert("Produto adicionado ao carrinho com sucesso!");
+
+
+          rota.push('/pedido');
+        };
+      
       }
-  }
+  
   return (
     <View style={styles.container}>
   <TouchableOpacity

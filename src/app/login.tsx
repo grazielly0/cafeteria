@@ -20,6 +20,7 @@ export default function login() {
     });
 
     
+    
     if (error) {
            
       if (error.message.includes('Usuário não cadastrado'))
@@ -30,6 +31,8 @@ export default function login() {
       }
       return;
     }
+
+
   }
 
   
