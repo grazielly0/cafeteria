@@ -17,7 +17,7 @@ export default function Index() {
       <Text style={styles.title}>CAFETERIA</Text>
       <Text style={styles.subtitle}>Bem-vindos à cafeteria D'Amore</Text>
 
-      <TouchableOpacity style={styles.button} onPress={() => rota.push('/telaEntrega')}>
+      <TouchableOpacity style={styles.button} onPress={() => rota.push('/formaEntrega')}>
         <Text style={styles.buttonText}>Menu</Text>
       </TouchableOpacity>
 
@@ -25,11 +25,11 @@ export default function Index() {
         <Text style={styles.buttonText}>Pedidos</Text>
       </TouchableOpacity>
       
-      <TouchableOpacity style={styles.button} onPress={() => rota.push('/sobre')}>
+      <TouchableOpacity style={styles.button} onPress={() => rota.push('/formaPagamento')}>
         <Text style={styles.buttonText}>Sobre</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={() => rota.push('/localizacao')}>
+      <TouchableOpacity style={styles.button} onPress={() => rota.push('/tipoPedido')}>
         <Text style={styles.buttonText}>Localização</Text>
       </TouchableOpacity>
 

@@ -1,55 +1,52 @@
-import { supabase } from '@/database/useClienteDataBase';
 import { MaterialIcons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useRouter } from "expo-router";
-import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { supabase } from '../utils/supabaseClient';
 
 export default function cadastro() {
-    const [nome, setNome] = useState("")
-    const [email, setEmail] = useState("")
-    const [senha, setSenha] = useState("")
-    const rota = useRouter()
-  
-  
-    async function create(){
-        try {
-          const { data, error } = await supabase.auth.signUp({
-            email : email,
-            password : senha,
-            
-            options: {
-              data: {
-                first_name: nome,
-              },
-            },
-          });
-      
-          if (error) {
-           
-            if (error.message.includes('Usuário já cadastrado'))
-             {
-              Alert.alert('Erro', 'Este e-mail já está cadastrado.');
-            } else {
-              Alert.alert('Erro', error.message);
-            }
-            return;
-          }
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const rota = useRouter();
 
-      
-          Alert.alert('Cadastro', 'Cadastro realizado! Verifique seu e-mail.');
-        } catch (err) {
-          const mensagem =
-            err instanceof Error ? err.message : JSON.stringify(err);
-          Alert.alert('Erro inesperado', mensagem);
+  async function create() {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: senha,
+        options: {
+          data: {
+            first_name: nome,
+          },
+        },
+      });
+
+      if (error) {
+        if (error.message.includes('Usuário já cadastrado')) {
+          Alert.alert('Erro', 'Este e-mail já está cadastrado.');
+        } else {
+          Alert.alert('Erro', error.message);
         }
-      
-  }//fim do inserir
-    
-    
+        return;
+      }
 
+      Alert.alert('Cadastro', 'Cadastro realizado! Verifique seu e-mail.');
+    } catch (err) {
+      const mensagem =
+        err instanceof Error ? err.message : JSON.stringify(err);
+      Alert.alert('Erro inesperado', mensagem);
+    }
+  }
 
-   
   return (
     <View style={styles.container}>
       {/* Topo com botão de voltar, título e ícones */}
@@ -70,12 +67,13 @@ export default function cadastro() {
         </View>
       </View>
 
+      {/* Formulário com margem maior abaixo da topBar */}
       <View style={styles.formBox}>
-        <TextInput placeholder="Nome" style={styles.input} />
-        <TextInput placeholder="E-mail"   style={styles.input} />
-        <TextInput placeholder="Senha"  style={styles.input} secureTextEntry />
+        <TextInput placeholder="Nome" onChangeText={setNome} value={nome} style={styles.input} />
+        <TextInput placeholder="E-mail" onChangeText={setEmail} value={email} style={styles.input} />
+        <TextInput placeholder="Senha" onChangeText={setSenha} value={senha} style={styles.input} secureTextEntry />
 
-        <TouchableOpacity  onPress={create} style={styles.button}>
+        <TouchableOpacity onPress={create} style={styles.button}>
           <Text style={styles.buttonText}>CADASTRAR</Text>
         </TouchableOpacity>
       </View>
@@ -85,8 +83,7 @@ export default function cadastro() {
       </TouchableOpacity>
     </View>
   );
-  }
-
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -98,8 +95,8 @@ const styles = StyleSheet.create({
   topBar: {
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
   },
   botaoVoltar: {
@@ -110,11 +107,14 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   title: {
+    position: 'absolute',
+    top: 10,
+    left: '50%',
+    transform: [{ translateX: -90 }],
     fontSize: 20,
     fontWeight: 'bold',
-    marginTop: 20,
-    marginBottom: 10,
     textAlign: 'center',
+    color: '#4E1F14',
   },
   formBox: {
     backgroundColor: '#E7DCC9',
@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '85%',
     alignItems: 'center',
+    marginTop: 60, // <-- FORMULÁRIO MAIS ABAIXO
   },
   input: {
     backgroundColor: '#fff',
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   linkText: {
-    marginTop: 15,
+    marginTop: 20,
     color: '#333',
     textDecorationLine: 'underline',
     textAlign: 'center',

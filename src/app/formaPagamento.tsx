@@ -1,150 +1,186 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useNavigation } from '@react-navigation/native';
-import { useRouter } from "expo-router";
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 
-const opcoesPagamento = ['Dinheiro', 'Cartão de Crédito', 'Cartão de Débito', 'Pix'];
-const opcoesCartao = ['Aproximação', 'Com senha'];
-
 const PaymentScreen = () => {
-  const [selecionado, setSelecionado] = useState(null);
-  const [formaCartao, setFormaCartao] = useState(null);
-  const [chavePix, setChavePix] = useState('');
-  const [pixGerado, setPixGerado] = useState(false);
-  const navigation = useNavigation();
-  const rota = useRouter();
+  const router = useRouter();
 
-  const gerarPix = () => {
-    const chave = 'cafeteriadamore@pix.com';
-    setChavePix(chave);
-    setPixGerado(true);
-  };
+  const [metodoSelecionado, setMetodoSelecionado] = useState('');
+  const [tipoCartao, setTipoCartao] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [numeroCartao, setNumeroCartao] = useState('');
+  const [validade, setValidade] = useState('');
+  const [cvv, setCvv] = useState('');
+  const chavePix = 'cafeteriadamore@pix.com';
 
-  const handleSelecionar = (opcao) => {
-    setSelecionado(opcao);
-    setFormaCartao(null); // Limpa formaCartao se mudar de opção
-    setPixGerado(false);
+  const formasPagamento = [
+    { nome: 'Pix', id: 'pix' },
+    { nome: 'Click to Pay', id: 'click' },
+    { nome: 'Google Pay', id: 'google' },
+    { nome: 'Nubank', id: 'nubank' },
+  ];
 
-    if (opcao === 'Pix') {
-      gerarPix();
-    }
-  };
+  const opcoesCartao = ['Aproximação', 'Com senha'];
 
   const finalizarCompra = () => {
-    if (!selecionado) {
+    if (!metodoSelecionado) {
       Alert.alert('Selecione uma forma de pagamento');
       return;
     }
 
-    if (
-      (selecionado === 'Cartão de Crédito' || selecionado === 'Cartão de Débito') &&
-      !formaCartao
-    ) {
-      Alert.alert('Informe se é aproximação ou com senha');
-      return;
+    if (metodoSelecionado === 'nubank') {
+      if (!tipoCartao) {
+        Alert.alert('Escolha se será por aproximação ou com senha');
+        return;
+      }
+      if (
+        numeroCartao.length < 16 ||
+        validade.length !== 5 ||
+        cvv.length < 3
+      ) {
+        Alert.alert('Preencha corretamente os dados do cartão');
+        return;
+      }
     }
 
-    Alert.alert('Compra finalizada!', `Pagamento via ${selecionado}. Obrigado!`);
-
-    // Limpar estados após finalização
-    setSelecionado(null);
-    setFormaCartao(null);
-    setChavePix('');
-    setPixGerado(false);
+    Alert.alert('Pedido confirmado!', `Pagamento via ${metodoSelecionado}`);
+    router.push('/confirmacaoPedido');
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.topBar}>
-        <TouchableOpacity
-          style={styles.botaoVoltar}
-          onPress={() => rota.push('/')}
-        >
+        <TouchableOpacity style={styles.botaoVoltar} onPress={() => router.back()}>
           <MaterialIcons name="arrow-back" size={28} color="#A67C52" />
         </TouchableOpacity>
 
         <View style={styles.icons}>
-          <TouchableOpacity onPress={() => rota.push('/pedido')}>
+          <TouchableOpacity onPress={() => router.push('/pedido')} style={styles.iconeAcao}>
             <MaterialIcons name="shopping-cart" size={24} color="#D09290" />
           </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => rota.push('/cadastro')}>
-            <AntDesign name="adduser" size={24} color="black" />
+          <TouchableOpacity onPress={() => router.push('/cadastro')} style={styles.iconeAcao}>
+            <AntDesign name="adduser" size={24} color="#4E1F14" />
           </TouchableOpacity>
         </View>
       </View>
 
-      <Text style={styles.titulo}>FORMA DE PAGAMENTO</Text>
+      <Text style={styles.headerText}>Detalhes do pagamento</Text>
 
-      <View style={styles.opcoes}>
-        {opcoesPagamento.map((opcao) => (
+      <Text style={styles.subtitulo}>Formas de pagamento</Text>
+      <View style={styles.grid}>
+        {formasPagamento.map((forma) => (
           <TouchableOpacity
-            key={opcao}
+            key={forma.id}
             style={[
-              styles.botaoOpcao,
-              selecionado === opcao && styles.botaoSelecionado,
+              styles.botaoMetodo,
+              metodoSelecionado === forma.id && styles.metodoSelecionado,
             ]}
-            onPress={() => handleSelecionar(opcao)}
+            onPress={() => {
+              setMetodoSelecionado(forma.id);
+              setTipoCartao('');
+              setNumeroCartao('');
+              setValidade('');
+              setCvv('');
+            }}
           >
-            <Text
-              style={[
-                styles.textoOpcao,
-                selecionado === opcao && styles.textoSelecionado,
-              ]}
-            >
-              {opcao}
-            </Text>
+            <Text style={styles.textoMetodo}>{forma.nome}</Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      {/* PERGUNTA: Aproximação ou com senha */}
-      {(selecionado === 'Cartão de Crédito' || selecionado === 'Cartão de Débito') && (
-        <View style={styles.areaPix}>
-          <Text style={styles.labelPix}>Como será o pagamento?</Text>
-          {opcoesCartao.map((forma) => (
+      {metodoSelecionado === 'nubank' && (
+        <View style={styles.cartaoForm}>
+          <Text style={styles.subtitulo}>Como deseja pagar com Nubank?</Text>
+          {opcoesCartao.map((opcao) => (
             <TouchableOpacity
-              key={forma}
+              key={opcao}
               style={[
-                styles.botaoOpcao,
-                formaCartao === forma && styles.botaoSelecionado,
+                styles.botaoMetodo,
+                tipoCartao === opcao && styles.metodoSelecionado,
               ]}
-              onPress={() => setFormaCartao(forma)}
+              onPress={() => setTipoCartao(opcao)}
             >
-              <Text
-                style={[
-                  styles.textoOpcao,
-                  formaCartao === forma && styles.textoSelecionado,
-                ]}
-              >
-                {forma}
-              </Text>
+              <Text style={styles.textoMetodo}>{opcao}</Text>
             </TouchableOpacity>
           ))}
-          {formaCartao && (
-            <Text style={{ marginTop: 12, fontSize: 16, color: '#5B3D1D' }}>
-              Insira o cartão na máquina.
-            </Text>
+
+          {tipoCartao !== '' && (
+            <View style={{ marginTop: 10 }}>
+              <TextInput
+                style={styles.input}
+                placeholder="Número do cartão (16 dígitos)"
+                keyboardType="numeric"
+                value={numeroCartao}
+                onChangeText={setNumeroCartao}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Validade (MM/AA)"
+                value={validade}
+                onChangeText={setValidade}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="CVV (3 dígitos)"
+                keyboardType="numeric"
+                secureTextEntry
+                value={cvv}
+                onChangeText={setCvv}
+              />
+              <Text style={{ color: '#4E1F14', fontSize: 15, marginTop: 8 }}>
+                Pagamento será por <Text style={{ fontWeight: 'bold' }}>{tipoCartao.toLowerCase()}</Text>.
+              </Text>
+              <Text style={{ color: '#4E1F14', fontSize: 15, marginTop: 6 }}>
+                Por favor, insira o cartão na máquina para prosseguir.
+              </Text>
+            </View>
           )}
         </View>
       )}
 
-      {/* QR Code Pix */}
-      {pixGerado && (
+      {metodoSelecionado === 'pix' && (
         <View style={styles.areaPix}>
-          <Text style={styles.labelPix}>Chave Pix:</Text>
-          <Text selectable style={styles.chavePix}>{chavePix}</Text>
+          <Text style={styles.pixLabel}>Escaneie o QR Code para pagar:</Text>
           <QRCode value={chavePix} size={160} />
+          <Text style={styles.pixChave}>{chavePix}</Text>
         </View>
       )}
 
-      <TouchableOpacity style={styles.botaoFinalizar} onPress={finalizarCompra}>
-        <Text style={styles.textoBotao}>Finalizar compra</Text>
+      <Text style={styles.subtitulo}>CPF/CNPJ na nota</Text>
+      <Text style={styles.textoNota}>Quer solicitar uma fatura?</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Adicionar CPF/CNPJ"
+        value={cpf}
+        onChangeText={setCpf}
+      />
+
+      <View style={styles.resumo}>
+        <View style={styles.linhaResumo}>
+          <Text style={styles.textoResumo}>Subtotal</Text>
+          <Text style={styles.textoResumo}>R$ 40,90</Text>
+        </View>
+        <View style={styles.linhaResumo}>
+          <Text style={styles.total}>Total</Text>
+          <Text style={styles.total}>R$ 40,90</Text>
+        </View>
+      </View>
+
+      <TouchableOpacity style={styles.botaoPagar} onPress={finalizarCompra}>
+        <Text style={styles.textoBotaoPagar}>Pagar</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -152,83 +188,136 @@ export default PaymentScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    padding: 20,
     backgroundColor: '#FCF8F3',
-    paddingHorizontal: 16,
-    paddingTop: 40,
+    flexGrow: 1,
   },
   topBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 60,
   },
   botaoVoltar: {
     padding: 4,
+    marginTop: 10,
   },
   icons: {
     flexDirection: 'row',
     gap: 16,
   },
-  titulo: {
-    fontSize: 24,
+  iconeAcao: {
+    marginLeft: 8,
+    marginTop: 10,
+  },
+  headerText: {
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#A67C52',
+    color: '#4E1F14',
+    marginBottom: 10,
     textAlign: 'center',
-    marginTop: 100,
   },
-  opcoes: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  botaoOpcao: {
-    backgroundColor: '#E6D6BE',
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    marginBottom: 15,
-  },
-  botaoSelecionado: {
-    backgroundColor: '#C89D72',
-  },
-  textoOpcao: {
+  subtitulo: {
     fontSize: 16,
-    color: '#5B3D1D',
-    textAlign: 'center',
-  },
-  textoSelecionado: {
-    color: '#fff',
     fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 10,
+    color: '#4E1F14',
   },
-  botaoFinalizar: {
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    justifyContent: 'space-between',
+  },
+  botaoMetodo: {
+    width: '48%',
+    backgroundColor: '#F5F5F5',
+    padding: 16,
+    borderRadius: 10,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E3D1B8',
+  },
+  metodoSelecionado: {
     backgroundColor: '#C89D72',
+  },
+  textoMetodo: {
+    color: '#4E1F14',
+    fontWeight: '600',
+  },
+  cartaoForm: {
+    marginTop: 20,
+    gap: 10,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#C89D72',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
+    backgroundColor: '#fff',
+    color: '#4E1F14',
+  },
+  areaPix: {
+    marginTop: 20,
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: '#FFF6F4',
+    padding: 16,
+    borderRadius: 12,
+  },
+  pixLabel: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: '#4E1F14',
+    fontWeight: '600',
+  },
+  pixChave: {
+    fontSize: 14,
+    color: '#4E1F14',
+    fontStyle: 'italic',
+  },
+  textoNota: {
+    fontSize: 14,
+    marginBottom: 5,
+    color: '#4E1F14',
+  },
+  resumo: {
+    marginTop: 30,
+    padding: 16,
+    backgroundColor: '#FDF4EA',
+    borderRadius: 10,
+  },
+  linhaResumo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  textoResumo: {
+    fontSize: 14,
+    color: '#4E1F14',
+  },
+  total: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#4E1F14',
+  },
+  botaoPagar: {
+    backgroundColor: '#D09290',
     paddingVertical: 16,
     borderRadius: 10,
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop: 20,
+    shadowColor: '#A67C52',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+    elevation: 4,
   },
-  textoBotao: {
-    fontSize: 18,
-    color: '#fff',
+  textoBotaoPagar: {
     fontWeight: 'bold',
-  },
-  areaPix: {
-    alignItems: 'center',
-    marginVertical: 24,
-    padding: 16,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-  },
-  labelPix: {
     fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
-    color: '#4E1F14',
-  },
-  chavePix: {
-    fontSize: 14,
-    marginBottom: 12,
-    color: '#000',
+    color: '#FCF8F3',
   },
 });
-

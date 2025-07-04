@@ -6,15 +6,15 @@ const OrderConfirmationScreen = () => {
   const router = useRouter();
   const rota = useRouter();
 
-  const voltarAoMenu = () => {
-    rota.push('/menu'); // Ajuste para o caminho da sua tela do menu
+  const voltarAoIndex = () => {
+    rota.push('/'); // Ajuste para o caminho da sua tela do menu
   }
 
   return (
     <View style={styles.container}>
       <Text style={styles.texto}>Pedido confirmado com sucesso!</Text>
-      <TouchableOpacity style={styles.botao} onPress={voltarAoMenu}>
-        <Text style={styles.botaoTexto}>Voltar ao Menu</Text>
+      <TouchableOpacity style={styles.botao} onPress={voltarAoIndex}>
+        <Text style={styles.botaoTexto}>Voltar ao inicio</Text>
       </TouchableOpacity>
     </View>
   );

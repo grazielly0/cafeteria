@@ -1,40 +1,21 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import AntDesign from '@expo/vector-icons/AntDesign';
-import EvilIcons from '@expo/vector-icons/EvilIcons';
 import { useRouter } from "expo-router";
 import React from 'react';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Cliente from '../components/Cliente'; // ajuste o caminho conforme necessário
 
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-const carrinho = [
-  {
-    id: '1',
-    nome: 'Cappuccino',
-    descricao: 'Café com leite vaporizado',
-    imagem: require('../../assets/images/cappuccino.jpg'),
-  },
-  {
-    id: '2',
-    nome: 'Croissant',
-    descricao: 'Doce amanteigado',
-    imagem: require('../../assets/images/croissant.jpg'),
-  },
-];
-
-const CartScreen = () => {
+const CartScreen = ({ cliente = [], remove = () => {} }) => {
   const rota = useRouter();
 
   const fazerPedido = () => {
-    rota.push('/tipoPedido'); // Navega para a tela de escolha do tipo de pedido
+    rota.push('/tipoPedido');
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <TouchableOpacity
-          style={styles.botaoVoltar}
-          onPress={() => rota.push('/')}
-        >
+        <TouchableOpacity style={styles.botaoVoltar} onPress={() => rota.push('/')}>
           <MaterialIcons name="arrow-back" size={28} color="#A67C52" />
         </TouchableOpacity>
 
@@ -51,28 +32,20 @@ const CartScreen = () => {
 
       <Text style={styles.titulo}>CARRINHO</Text>
 
-      <FlatList
-        data={carrinho}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
-            <Image source={item.imagem} style={styles.imagem} />
-            <View style={styles.info}>
-              <Text style={styles.nome}>{item.nome}</Text>
-              <Text style={styles.descricao}>{item.descricao}</Text>
-            </View>
-            <View style={styles.iconess}>
-              <TouchableOpacity onPress={() => String(item.id)} style={styles.iconeAcao}>
-                <MaterialIcons name="edit" size={24} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => String(item.id)} style={styles.iconeAcao}>
-                <EvilIcons name="trash" size={24} color="black" />
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-        contentContainerStyle={{ paddingBottom: 20 }}
-      />
+      <View style={styles.flat}>
+        <FlatList 
+          data={cliente}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={({ item }) => (
+            <Cliente 
+              data={item} 
+              onEditar={() => rota.push({ pathname: '/Atualizar', params: item })} 
+              onDelete={() => remove(item.id)} 
+            />
+          )}
+          contentContainerStyle={{ gap: 16 }}
+        />
+      </View>
 
       <TouchableOpacity style={styles.botaoPedido} onPress={fazerPedido}>
         <Text style={styles.textoBotao}>Fazer pedido</Text>
@@ -110,41 +83,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
-  itemContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#FFF',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 15,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  imagem: {
-    width: 60,
-    height: 60,
-    borderRadius: 10,
-    marginRight: 10,
-  },
-  info: {
+  flat: {
     flex: 1,
-  },
-  nome: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-  },
-  descricao: {
-    fontSize: 14,
-    color: '#666',
-  },
-  iconess: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginBottom: 20,
   },
   iconeAcao: {
     marginHorizontal: 6,
@@ -162,5 +103,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
 
  
