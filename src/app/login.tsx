@@ -31,6 +31,10 @@ export default function login() {
       }
       return;
     }
+  
+    Alert.alert("Sucesso", "Login realizado com sucesso!");
+    rota.push("/"); 
+  }
 
 
   }
