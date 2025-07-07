@@ -1,60 +1,241 @@
+import { supabase } from '@/database/useClienteDataBase';
 import { MaterialIcons } from "@expo/vector-icons";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from "expo-router";
-import React from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Cliente from '../components/Cliente'; // ajuste o caminho conforme necessário
+import { useEffect, useState } from 'react';
+import CardPedido from '../components/cardPedido';
 
-const CartScreen = ({ cliente = [], remove = () => {} }) => {
-  const rota = useRouter();
+export default function PedidoScreen() {
+ 
+      const [pedidos, setPedidos] = useState<any[]>([]);
+      const [produtos, setProdutos] = useState<any[]>([]);
+      const [carrinhoId, setCarrinhoId] = useState('')
+      const [id, setId] = useState('');
+      const [totalCarrinho, setTotalCarrinho] = useState(0);
+      const rota = useRouter()
+      const [preco, setPreco] = useState<any[]>([]);
+ 
+   // Removendo o useEffect incorreto
+   // useEffect(() => {
+   //   handleAddToCart
+   // }, [])
 
-  const fazerPedido = () => {
-    rota.push('/tipoPedido');
-  };
+ 
+  
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.topBar}>
-        <TouchableOpacity style={styles.botaoVoltar} onPress={() => rota.push('/')}>
-          <MaterialIcons name="arrow-back" size={28} color="#A67C52" />
-        </TouchableOpacity>
+  async function pegarCarrinhoDoUsuario() {
+    // pega o usuário atual
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData.user) {
+      console.error('Usuário não autenticado');
+      return null;
+    }
+    const userId = userData.user.id;
+  
+    // busca o carrinho do usuário
+    const { data: carrinhoData, error: carrinhoError } = await supabase
+      .from('carrinho')
+      .select('id')
+      .eq('user_id', userId)
+      .single(); // pega só 1 carrinho
+  
+    if (carrinhoError || !carrinhoData) {
+      console.error('Erro ao buscar carrinho:', carrinhoError?.message);
+      return null;
+    }
+  
+    return carrinhoData.id;
+  }
+  
 
-        <View style={styles.icons}>
-          <TouchableOpacity onPress={() => rota.push('/pedido')} style={styles.iconeAcao}>
-            <MaterialIcons name="shopping-cart" size={24} color="#D09290" />
+  useEffect(() => {
+    async function carregarPedidos() {
+      const carrinho = await pegarCarrinhoDoUsuario();
+      if (!carrinho) return;
+  
+      setCarrinhoId(carrinho);
+  
+      // Fazendo JOIN com a tabela produto para buscar dados completos
+      const { data: pedidosData, error: pedidosError } = await supabase
+        .from('carrinho_produto')
+        .select(`
+          id,
+          quantidade,
+          produto:produto_id (
+            id,
+            nome,
+            preco,
+            categoria,
+            imagem
+          )
+        `)
+        .eq('carrinho_id', carrinho)
+        .order('id', { ascending: false });
+  
+      if (pedidosError) {
+        console.error('Erro ao buscar pedidos:', pedidosError.message);
+        return;
+      }
+  
+      setProdutos(pedidosData || []);
+      
+      // Calcula o total do carrinho
+      const total = (pedidosData || []).reduce((acc, item) => {
+        return acc + (item.produto.preco * item.quantidade);
+      }, 0);
+      setTotalCarrinho(total);
+    }
+  
+    carregarPedidos();
+  }, []);
+  
+ const quantidade = 1;
+
+  
+  async function handleAddToCart(produtoId: string, quantidade: number) {
+  const carrinhoId = await pegarCarrinhoDoUsuario();
+  if (!carrinhoId) return;
+
+  const { error } = await supabase.from('carrinho_produto').insert({
+    carrinho_id: carrinhoId,
+    produto_id: produtoId,
+    quantidade,
+  });
+
+  if (error) {
+    console.error('Erro ao adicionar ao carrinho:', error.message);
+    return;
+  }
+
+  // Recarrega os produtos da tela
+  await carregarPedidos();
+}
+
+    async function removerPedidoPorId(id: number) {
+      const { error } = await supabase
+        .from('carrinho_produto')
+        .delete()
+        .eq('id', id)
+    
+      if (error) {
+        console.error('Erro ao excluir item do carrinho:', error.message)
+        return false
+      }
+    
+      return true
+    }
+
+
+
+  
+    
+    async function handleDelete(id: number) {
+      const sucesso = await removerPedidoPorId(id)
+    
+      if (sucesso) {
+        // Recarrega os produtos após deletar
+        const carrinho = await pegarCarrinhoDoUsuario();
+        if (!carrinho) return;
+    
+        const { data: pedidosData, error: pedidosError } = await supabase
+          .from('carrinho_produto')
+          .select(`
+            id,
+            quantidade,
+            produto:produto_id (
+              id,
+              nome,
+              preco,
+              categoria,
+              imagem
+            )
+          `)
+          .eq('carrinho_id', carrinho)
+          .order('id', { ascending: false });
+    
+        if (pedidosError) {
+          console.error('Erro ao buscar pedidos:', pedidosError.message);
+          return;
+        }
+    
+        setProdutos(pedidosData || []);
+        
+        // Recalcula o total do carrinho
+        const total = (pedidosData || []).reduce((acc, item) => {
+          return acc + (item.produto.preco * item.quantidade);
+        }, 0);
+        setTotalCarrinho(total);
+      }
+    }
+  
+    const fazerPedido = () => {
+      if (produtos.length === 0) {
+        Alert.alert('Carrinho vazio', 'Adicione produtos ao carrinho antes de fazer o pedido.');
+        return;
+      }
+      rota.push('/detalhesPedido');
+    };
+  
+  
+      
+    return (
+      <View style={styles.container}>
+        <View style={styles.topBar}>
+          <TouchableOpacity style={styles.botaoVoltar} onPress={() => rota.push('/')}>
+            <MaterialIcons name="arrow-back" size={28} color="#A67C52" />
           </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => rota.push('/cadastro')} style={styles.iconeAcao}>
-            <AntDesign name="adduser" size={24} color="black" />
-          </TouchableOpacity>
+   
+          <View style={styles.icons}>
+            <TouchableOpacity onPress={() => rota.push('/pedido')} style={styles.iconeAcao}>
+              <MaterialIcons name="shopping-cart" size={24} color="#D09290" />
+            </TouchableOpacity>
+   
+            <TouchableOpacity onPress={() => rota.push('/cadastro')} style={styles.iconeAcao}>
+              <AntDesign name="adduser" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
         </View>
+   
+        <Text style={styles.titulo}>CARRINHO</Text>
+        
+        {produtos.length === 0 ? (
+          <View style={styles.carrinhoVazio}>
+            <MaterialIcons name="shopping-cart" size={64} color="#CCC" />
+            <Text style={styles.textoCarrinhoVazio}>Seu carrinho está vazio</Text>
+            <Text style={styles.subtextoCarrinhoVazio}>Adicione produtos do menu</Text>
+          </View>
+        ) : (
+          <>
+            <View style={styles.listaContainer}>
+              <FlatList
+                data={produtos}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                  <CardPedido data={item} onDelete={() => handleDelete(item.id)} />
+                )}
+                contentContainerStyle={{ gap: 16 }}
+              />
+            </View>
+            
+            <View style={styles.totalContainer}>
+              <Text style={styles.totalText}>Total:  do Carrinho:</Text>
+              <Text style={styles.totalValue}> Total: R$ {totalCarrinho.toFixed(2)}</Text>
+            </View>
+          </>
+        )}
+   
+        <TouchableOpacity 
+          style={[styles.botaoPedido, produtos.length === 0 && styles.botaoPedidoDisabled]} 
+          onPress={fazerPedido}
+          disabled={produtos.length === 0}
+        >
+          <Text style={styles.textoBotao}>Fazer pedido</Text>
+        </TouchableOpacity>
       </View>
-
-      <Text style={styles.titulo}>CARRINHO</Text>
-
-      <View style={styles.flat}>
-        <FlatList 
-          data={cliente}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => (
-            <Cliente 
-              data={item} 
-              onEditar={() => rota.push({ pathname: '/Atualizar', params: item })} 
-              onDelete={() => remove(item.id)} 
-            />
-          )}
-          contentContainerStyle={{ gap: 16 }}
-        />
-      </View>
-
-      <TouchableOpacity style={styles.botaoPedido} onPress={fazerPedido}>
-        <Text style={styles.textoBotao}>Fazer pedido</Text>
-      </TouchableOpacity>
-    </View>
-  );
+    );
 };
 
-export default CartScreen;
+/*  renderItem={renderItem}*/
 
 const styles = StyleSheet.create({
   container: {
@@ -83,7 +264,68 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
-  flat: {
+  carrinhoVazio: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textoCarrinhoVazio: {
+    fontSize: 18,
+    color: '#666',
+    marginTop: 16,
+    fontWeight: '600',
+  },
+  subtextoCarrinhoVazio: {
+    fontSize: 14,
+    color: '#999',
+    marginTop: 8,
+  },
+  listaContainer: {
+    flex: 1,
+  },
+  totalContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  totalText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+  },
+  totalValue: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#C89D72',
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  imagem: {
+    width: 60,
+    height: 60,
+    borderRadius: 10,
+    marginRight: 10,
+  },
+  info: {
     flex: 1,
     marginBottom: 20,
   },
@@ -95,7 +337,10 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: 'center',
-    marginBottom: 16,
+    marginTop: 'auto',
+  },
+  botaoPedidoDisabled: {
+    backgroundColor: '#CCC',
   },
   textoBotao: {
     color: '#fff',

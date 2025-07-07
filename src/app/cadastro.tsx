@@ -13,40 +13,49 @@ import {
 import { supabase } from '../utils/supabaseClient';
 
 export default function cadastro() {
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const rota = useRouter();
+    const [nome, setNome] = useState("")
+    const [email, setEmail] = useState("")
+    const [senha, setSenha] = useState("")
+    const rota = useRouter()
+  
+  
+    async function create(){
+        try {
+          const { data, error } = await supabase.auth.signUp({
+            email : email,
+            password : senha,
+            options: {
+              data: {
+                first_name: nome,
+              },
+            },
+          });
+      
+          if (error) {
+           
+            if (error.message.includes('Usuário já cadastrado'))
+             {
+              Alert.alert('Erro', 'Este e-mail já está cadastrado.');
+            } else {
+              Alert.alert('Erro', error.message);
+            }
+            return;
+          }
 
-  async function create() {
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: senha,
-        options: {
-          data: {
-            first_name: nome,
-          },
-        },
-      });
-
-      if (error) {
-        if (error.message.includes('Usuário já cadastrado')) {
-          Alert.alert('Erro', 'Este e-mail já está cadastrado.');
-        } else {
-          Alert.alert('Erro', error.message);
+      
+          Alert.alert('Cadastro', 'Cadastro realizado! Verifique seu e-mail.');
+        } catch (err) {
+          const mensagem =
+            err instanceof Error ? err.message : JSON.stringify(err);
+          Alert.alert('Erro inesperado', mensagem);
         }
-        return;
-      }
+      
+  }//fim do inserir
+    
+    
 
-      Alert.alert('Cadastro', 'Cadastro realizado! Verifique seu e-mail.');
-    } catch (err) {
-      const mensagem =
-        err instanceof Error ? err.message : JSON.stringify(err);
-      Alert.alert('Erro inesperado', mensagem);
-    }
-  }
 
+   
   return (
     <View style={styles.container}>
       {/* Topo com botão de voltar, título e ícones */}
@@ -69,9 +78,9 @@ export default function cadastro() {
 
       {/* Formulário com margem maior abaixo da topBar */}
       <View style={styles.formBox}>
-        <TextInput placeholder="Nome" onChangeText={setNome} value={nome} style={styles.input} />
-        <TextInput placeholder="E-mail" onChangeText={setEmail} value={email} style={styles.input} />
-        <TextInput placeholder="Senha" onChangeText={setSenha} value={senha} style={styles.input} secureTextEntry />
+        <TextInput placeholder="Nome" onChangeText={setNome} value={nome}  style={styles.input} />
+        <TextInput placeholder="E-mail"  onChangeText={setEmail} style={styles.input} />
+        <TextInput placeholder="Senha"    onChangeText={setSenha} style={styles.input} secureTextEntry />
 
         <TouchableOpacity onPress={create} style={styles.button}>
           <Text style={styles.buttonText}>CADASTRAR</Text>
