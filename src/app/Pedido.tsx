@@ -100,8 +100,27 @@ export default function PedidoScreen() {
     carregarPedidos();
   }, []);
   
+ const quantidade = 1;
 
   
+  async function handleAddToCart(produtoId: string, quantidade: number) {
+  const carrinhoId = await pegarCarrinhoDoUsuario();
+  if (!carrinhoId) return;
+
+  const { error } = await supabase.from('carrinho_produto').insert({
+    carrinho_id: carrinhoId,
+    produto_id: produtoId,
+    quantidade,
+  });
+
+  if (error) {
+    console.error('Erro ao adicionar ao carrinho:', error.message);
+    return;
+  }
+
+  // Recarrega os produtos da tela
+  await carregarPedidos();
+}
 
     async function removerPedidoPorId(id: number) {
       const { error } = await supabase
@@ -201,7 +220,7 @@ export default function PedidoScreen() {
             <View style={styles.listaContainer}>
               <FlatList
                 data={produtos}
-                keyExtractor={(item) => String(item.id)}
+                keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
                   <CardPedido data={item} onDelete={() => handleDelete(item.id)} />
                 )}
@@ -210,8 +229,8 @@ export default function PedidoScreen() {
             </View>
             
             <View style={styles.totalContainer}>
-              <Text style={styles.totalText}>Total do Carrinho:</Text>
-              <Text style={styles.totalValue}>R$ {totalCarrinho.toFixed(2)}</Text>
+              <Text style={styles.totalText}>Total:  do Carrinho:</Text>
+              <Text style={styles.totalValue}> Total: R$ {totalCarrinho.toFixed(2)}</Text>
             </View>
           </>
         )}
@@ -226,6 +245,8 @@ export default function PedidoScreen() {
       </View>
     );
 };
+
+/*  renderItem={renderItem}*/
 
 const styles = StyleSheet.create({
   container: {
